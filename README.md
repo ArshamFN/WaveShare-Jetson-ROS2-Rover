@@ -8,184 +8,294 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 
 ## 📋 Project Overview
 
-**Goal:** Build a complete autonomous navigation system from scratch to demonstrate production-ready ROS2 development skills for robotics engineering roles.
+**Goal:** Build a production-ready autonomous navigation system from scratch to demonstrate ROS2 development skills for robotics engineering roles.
 
 **Why This Project:**
-- Learn ROS2 development (nodes, topics, services, actions)
+- Master ROS2 architecture (nodes, topics, services, actions)
 - Implement SLAM-based mapping and localization
-- Configure autonomous waypoint navigation with Nav2
-- Document complete build process for portfolio
-- Future-ready for computer vision integration
+- Deploy autonomous waypoint navigation with Nav2
+- Document real engineering problem-solving for portfolio
+- Build AI-ready platform for future computer vision integration
+
+**Timeline:** 12-14 weeks from hardware assembly to autonomous navigation
 
 ## 🤖 Hardware Platform
 
 ### Core Components
 - **Platform:** Waveshare Wave Rover (4WD skid-steer chassis)
 - **Compute:** NVIDIA Jetson Orin Nano Super Developer Kit (8GB RAM, 67 TOPS AI)
-- **Sensors:** Slamtec RPLidar C1 (12m range, 10Hz, DTOF)
-- **Power:** 3x 18650 lithium batteries (7800mAh) via Wave Rover UPS module
-- **Communication:** Onboard ESP32 for low-level motor control
+- **Sensors:** Slamtec RPLidar C1 (12m range, 10Hz, DTOF fusion technology)
+- **Power:** 3x 18650 lithium batteries (7800mAh total) via Wave Rover UPS module
+- **Motor Control:** Onboard ESP32 for low-level control with encoder feedback
 
 ### Technical Specifications
-| Component | Specs |
-|-----------|-------|
+
+| Component | Specification |
+|-----------|---------------|
 | **Drivetrain** | 4x N20 motors with encoders, skid-steer kinematics |
 | **CPU** | 6-core ARM Cortex-A78AE @ 1.7GHz |
-| **GPU** | 512 CUDA cores + Tensor cores |
+| **GPU** | 512 CUDA cores + Tensor cores (67 TOPS) |
+| **RAM** | 8GB LPDDR5 |
 | **Lidar Range** | 12m (white objects), 6m (black objects) |
-| **Scan Rate** | 5000 Hz @ 10Hz rotation |
-| **Weight** | ~2.5kg total |
-
-[📸 Hardware photos coming soon]
+| **Lidar Scan Rate** | 5000 Hz @ 10Hz rotation frequency |
+| **Light Resistance** | 30,000 lux (outdoor capable) |
+| **Total Weight** | ~2.5kg |
+| **Runtime** | 2-3 hours estimated |
 
 ## 💻 Software Stack
 
-- **Operating System:** Ubuntu 22.04 (JetPack 6.1)
-- **ROS Version:** ROS2 Humble Hawksbill
-- **Navigation:** Nav2 (Navigation2 stack)
-- **SLAM:** slam_toolbox
+- **Operating System:** Ubuntu 22.04 LTS (JetPack 6.1)
+- **ROS Distribution:** ROS2 Humble Hawksbill
+- **Navigation Framework:** Nav2 (Navigation2 stack)
+- **SLAM Algorithm:** slam_toolbox (pose-graph optimization)
 - **Localization:** AMCL (Adaptive Monte Carlo Localization)
 - **Visualization:** RViz2
-- **Languages:** Python 3, C++
+- **Development Languages:** Python 3.10, C++17
 
-## 📅 Project Timeline
+## 📅 Project Phases
 
-### Phase 1: Hardware Setup & Integration (Weeks 1-2)
-- [x] Parts ordered
-- [ ] Unbox and inventory all components
-- [ ] Assemble Wave Rover base
-- [ ] Mount Jetson on rover
-- [ ] Mount RPLidar C1
-- [ ] Test power system
-- [ ] Verify motor control via ESP32
+### ✅ Phase 0: Planning & Ordering (Week 1)
+- [x] Research platform options
+- [x] Select components and finalize BOM
+- [x] Order all parts (~$760 CAD)
+- [x] Create GitHub repository
+- [x] Set up documentation structure
 
-**Milestone:** Complete mechanical assembly, all systems powered
+**Status:** COMPLETE - Parts arriving February 19, 2025
 
-### Phase 2: ROS2 Base Setup (Weeks 3-4)
-- [ ] Install JetPack 6.1 on Jetson
+---
+
+### Phase 1: Hardware Setup (Weeks 2-3)
+- [ ] Unbox and inventory components
+- [ ] Assemble Wave Rover base platform
+- [ ] Mount Jetson Orin Nano on chassis
+- [ ] Mount RPLidar C1 with custom bracket
+- [ ] Install batteries and test power distribution
+- [ ] Verify ESP32 motor control functionality
+- [ ] Test encoder feedback
+
+**Milestone:** Fully assembled rover with verified power and motor systems
+
+---
+
+### Phase 2: ROS2 Foundation (Weeks 3-4)
+- [ ] Flash JetPack 6.1 to Jetson
 - [ ] Install ROS2 Humble
-- [ ] Configure ESP32-ROS2 serial bridge
-- [ ] Create motor control node
-- [ ] Test teleoperation (keyboard control)
-- [ ] Verify encoder odometry
+- [ ] Configure ESP32-to-ROS2 serial communication bridge
+- [ ] Write motor control node (velocity commands → ESP32)
+- [ ] Implement odometry publisher (encoders → /odom topic)
+- [ ] Test keyboard teleoperation
+- [ ] Verify tf tree broadcasting
 
-**Milestone:** Drive rover via ROS2 commands
+**Milestone:** Drive rover via ROS2 velocity commands, visualize odometry in RViz2
+
+---
 
 ### Phase 3: Sensor Integration (Weeks 5-6)
-- [ ] Install RPLidar ROS2 driver
-- [ ] Visualize scan data in RViz2
-- [ ] Configure TF tree (transforms)
-- [ ] Integrate wheel odometry
-- [ ] Test sensor fusion
+- [ ] Install rplidar_ros2 driver package
+- [ ] Configure Lidar parameters for RPLidar C1
+- [ ] Visualize live scan data in RViz2
+- [ ] Build complete TF tree (base_link → laser_frame)
+- [ ] Fuse wheel odometry with Lidar data
+- [ ] Test sensor stability and data quality
 
-**Milestone:** Live sensor visualization in RViz2
+**Milestone:** Live 2D Lidar visualization with correct transforms
+
+---
 
 ### Phase 4: SLAM Mapping (Weeks 7-8)
-- [ ] Install slam_toolbox
-- [ ] Configure SLAM parameters for RPLidar C1
-- [ ] Create map of test environment
-- [ ] Tune loop closure detection
-- [ ] Save and load maps
+- [ ] Install and configure slam_toolbox
+- [ ] Tune SLAM parameters (scan matching, loop closure)
+- [ ] Create map of indoor test environment
+- [ ] Test map quality and consistency
+- [ ] Implement map save/load functionality
+- [ ] Document mapping procedures
 
-**Milestone:** Reliable map generation
+**Milestone:** Generate reliable 2D occupancy grid maps
 
-### Phase 5: Autonomous Navigation (Weeks 9-11)
+---
+
+### Phase 5: Autonomous Navigation (Weeks 9-12)
 - [ ] Install Nav2 stack
-- [ ] Configure costmaps (global & local)
-- [ ] Set up path planning (NavFn, Smac Planner)
-- [ ] Configure controller (DWB, TEB)
-- [ ] Test waypoint navigation
-- [ ] Tune navigation parameters
+- [ ] Configure global costmap (static map layer)
+- [ ] Configure local costmap (obstacle detection)
+- [ ] Set up path planner (NavFn or Smac Planner)
+- [ ] Configure controller (DWB or TEB)
+- [ ] Implement recovery behaviors
+- [ ] Test single waypoint navigation
+- [ ] Test multi-waypoint missions
+- [ ] Tune navigation stack for performance
 
-**Milestone:** Autonomous waypoint-to-waypoint navigation
+**Milestone:** Autonomous navigation from point A to point B with obstacle avoidance
 
-### Phase 6: Testing & Documentation (Weeks 12-14)
-- [ ] Run full autonomous missions
-- [ ] Record demo videos
-- [ ] Complete all documentation
-- [ ] Write technical blog post
-- [ ] Prepare for job applications
+---
 
-**Milestone:** Portfolio-ready project
+### Phase 6: Testing & Portfolio (Weeks 13-14)
+- [ ] Run full autonomous missions (10+ waypoints)
+- [ ] Record high-quality demo videos
+- [ ] Complete all technical documentation
+- [ ] Write project retrospective blog post
+- [ ] Create resume project description
+- [ ] Prepare for technical interviews
 
-## 📂 Project Structure
+**Milestone:** Portfolio-ready autonomous rover project
+
+---
+
+## 📂 Repository Structure
 ```
 waveshare-jetson-ros2-rover/
-├── README.md
+├── README.md                    # This file
+├── LICENSE                      # MIT License
 ├── docs/
-│   ├── hardware/          # Assembly guides, wiring diagrams, BOM
-│   ├── software/          # Setup instructions, architecture docs
-│   └── testing/           # Test logs, issues encountered, solutions
-├── src/                   # ROS2 packages
-│   ├── rover_bringup/     # Launch files, configurations
-│   ├── rover_description/ # URDF models
-│   └── rover_navigation/  # Navigation configurations
-├── images/                # Photos and diagrams
-└── cad/                   # 3D models for custom mounts
+│   ├── hardware/
+│   │   ├── bill-of-materials.md      # Complete parts list with costs
+│   │   ├── assembly-guide.md         # Step-by-step assembly instructions
+│   │   └── wiring-diagram.md         # Electrical connections and schematics
+│   ├── software/
+│   │   ├── setup-guide.md            # ROS2 installation and configuration
+│   │   └── architecture.md           # System architecture and design decisions
+│   └── testing/
+│       └── test-logs.md              # Daily progress, issues, and solutions
+├── src/
+│   ├── rover_bringup/           # Launch files and configurations
+│   ├── rover_description/       # URDF robot model
+│   └── rover_navigation/        # Nav2 parameter files
+├── images/
+│   ├── build/                   # Assembly progress photos
+│   └── testing/                 # Demo videos and test results
+└── cad/                         # Custom 3D printed parts (if any)
 ```
 
 ## 🎯 Skills Demonstrated
 
-This project showcases:
-- ✅ **ROS2 Architecture:** Nodes, topics, services, actions, parameters
-- ✅ **Mobile Robot Navigation:** Differential/skid-steer kinematics, odometry
-- ✅ **SLAM:** Mapping, localization, loop closure
-- ✅ **Sensor Integration:** Lidar, encoders, IMU
-- ✅ **System Integration:** Hardware + software debugging
-- ✅ **Technical Documentation:** Clear communication of complex systems
-- ✅ **Problem Solving:** Real-world troubleshooting and optimization
+This project showcases professional robotics engineering competencies:
+
+**ROS2 Development:**
+- Node architecture and communication patterns
+- Topic pub/sub, services, and actions
+- Parameter management and launch files
+- TF (transform) tree configuration
+
+**Mobile Robotics:**
+- Differential/skid-steer kinematics
+- Wheel odometry and dead reckoning
+- Sensor fusion techniques
+- Path planning and trajectory control
+
+**SLAM & Localization:**
+- 2D Lidar-based mapping
+- Pose-graph SLAM optimization
+- Loop closure detection
+- Particle filter localization (AMCL)
+
+**System Integration:**
+- Hardware-software interfacing
+- Serial communication protocols
+- Power management and safety
+- Real-time performance optimization
+
+**Professional Practices:**
+- Version control (Git/GitHub)
+- Technical documentation
+- Systematic debugging methodology
+- Iterative development process
 
 ## 🚀 Future Enhancements (Project #2)
 
-After completing autonomous navigation:
-- [ ] Add depth camera (Intel RealSense D435i)
-- [ ] Implement visual obstacle detection (YOLO, OpenCV)
-- [ ] Add GPS for outdoor waypoint navigation
-- [ ] Multi-robot coordination
-- [ ] Payload delivery mechanism
+After achieving autonomous navigation, planned upgrades include:
+
+- **Computer Vision:** Intel RealSense D435i depth camera
+- **Visual Obstacle Avoidance:** YOLO object detection, semantic segmentation
+- **Outdoor Navigation:** GPS waypoint following
+- **Advanced Features:** Multi-robot coordination, payload delivery mechanism
+- **Machine Learning:** Reinforcement learning for dynamic environments
 
 ## 📚 Documentation
 
-- [Bill of Materials](docs/hardware/bill-of-materials.md)
-- [Assembly Guide](docs/hardware/assembly-guide.md)
-- [Wiring Diagram](docs/hardware/wiring-diagram.md)
-- [Software Setup](docs/software/setup-guide.md)
-- [ROS2 Architecture](docs/software/architecture.md)
-- [Test Logs](docs/testing/test-logs.md)
+- [Bill of Materials](docs/hardware/bill-of-materials.md) - Complete parts list with suppliers
+- [Assembly Guide](docs/hardware/assembly-guide.md) - Step-by-step build instructions
+- [Wiring Diagram](docs/hardware/wiring-diagram.md) - Electrical connections
+- [Software Setup](docs/software/setup-guide.md) - ROS2 installation and configuration
+- [System Architecture](docs/software/architecture.md) - Design decisions and rationale
+- [Test Logs](docs/testing/test-logs.md) - Daily progress and problem-solving
 
 ## 🎥 Demo Videos
 
-*Coming soon - autonomous navigation demos*
+*Demo videos will be added as milestones are completed*
 
 ## 📊 Current Status
 
-**Last Updated:** [Today's date]
+**Last Updated:** February 17, 2025
 
-**Current Phase:** Phase 1 - Parts ordering and planning
+**Current Phase:** Phase 0 Complete - Parts Ordered
 
-**Next Steps:**
-1. Order all components
-2. Set up development environment
-3. Begin hardware assembly when parts arrive
+**Investment:** ~$722 CAD total project cost
 
-## 🔗 Resources
+**Timeline:**
+- Parts ordered: February 17, 2025
+- Expected delivery: February 19, 2025
+- Assembly start: February 19, 2025
+- Projected completion: May 2025
 
+**Next Immediate Actions:**
+1. ✅ Components ordered (Wave Rover, Jetson, Lidar, batteries)
+2. Install ROS2 Humble on development machine
+3. Study Waveshare Wave Rover documentation
+4. Prepare workspace and assembly tools
+5. Begin hardware assembly on delivery day
+
+## 🔗 Useful Resources
+
+**Platform Documentation:**
 - [Waveshare Wave Rover Wiki](https://www.waveshare.com/wiki/WAVE_ROVER)
+- [NVIDIA Jetson Orin Documentation](https://developer.nvidia.com/embedded/jetson-orin)
+- [RPLidar C1 Manual](https://www.slamtec.com/en/Lidar/C1)
+
+**ROS2 Learning:**
 - [ROS2 Humble Documentation](https://docs.ros.org/en/humble/)
 - [Nav2 Documentation](https://navigation.ros.org/)
-- [slam_toolbox](https://github.com/SteveMacenski/slam_toolbox)
+- [slam_toolbox GitHub](https://github.com/SteveMacenski/slam_toolbox)
+- [ROS2 Tutorials](https://docs.ros.org/en/humble/Tutorials.html)
+
+**Community:**
+- [ROS Discourse Forum](https://discourse.ros.org/)
+- [Robotics Stack Exchange](https://robotics.stackexchange.com/)
+- [r/ROS Subreddit](https://www.reddit.com/r/ROS/)
 
 ## 👤 Author
 
-**[Your Name]**
-- LinkedIn: [Your Profile]
-- Email: [Your Email]
-- Location: GTA, Ontario, Canada
+**Arsham Fakhri Noghani**
+
+Building autonomous systems and learning production ROS2 development.
+
+- 📍 Location: Greater Toronto Area, Ontario, Canada
+- 💼 LinkedIn: [Add your LinkedIn URL]
+- 📧 Email: [Add your email]
+- 🎓 Background: Software Engineering, Robotics
+
+**Note:** This is a learning project built to demonstrate robotics engineering skills for career opportunities in the GTA robotics industry.
 
 ## 📄 License
 
-MIT License - See LICENSE file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+You are free to use, modify, and distribute this code for educational and commercial purposes.
+
+## 🙏 Acknowledgments
+
+- Waveshare for the Wave Rover platform design
+- NVIDIA for Jetson developer tools and documentation
+- Slamtec for RPLidar SDK and ROS2 drivers
+- Open Robotics and the ROS2 community
+- Steve Macenski for slam_toolbox and Nav2 development
 
 ---
 
-**Built with:** NVIDIA Jetson Orin Nano Super | Waveshare Wave Rover | ROS2 Humble | RPLidar C1
+**Project Status:** 🟡 In Progress - Parts arriving February 19, 2025
+
+**Built with:** NVIDIA Jetson Orin Nano Super | Waveshare Wave Rover | ROS2 Humble | Slamtec RPLidar C1
+
+---
+
+*"The best way to learn robotics is to build a robot."*
