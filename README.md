@@ -6,7 +6,7 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)
 ![Platform](https://img.shields.io/badge/platform-Jetson%20Orin%20Nano-green)
 
-## 📋 Project Overview
+## Project Overview
 
 **Goal:** Build a production-ready autonomous navigation system from scratch to demonstrate ROS2 development skills for robotics engineering roles.
 
@@ -19,7 +19,7 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 
 **Timeline:** 12-14 weeks from hardware assembly to autonomous navigation
 
-## 🤖 Hardware Platform
+## Hardware Platform
 
 ### Core Components
 - **Platform:** Waveshare Wave Rover (4WD skid-steer chassis)
@@ -42,7 +42,7 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 | **Total Weight** | ~2.5kg |
 | **Runtime** | 2-3 hours estimated |
 
-## 💻 Software Stack
+## Software Stack
 
 - **Operating System:** Ubuntu 22.04 LTS (JetPack 6.1)
 - **ROS Distribution:** ROS2 Humble Hawksbill
@@ -52,7 +52,7 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 - **Visualization:** RViz2
 - **Development Languages:** Python 3.10, C++17
 
-## 📅 Project Phases
+## Project Phases
 
 ### ✅ Phase 0: Planning & Ordering (Week 1)
 - [x] Research platform options
@@ -106,7 +106,7 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 ### Phase 4: SLAM Mapping (Weeks 7-8)
 - [ ] Install and configure slam_toolbox
 - [ ] Tune SLAM parameters (scan matching, loop closure)
-- [ ] Create map of indoor test environment
+- [ ] Create a map of the indoor test environment
 - [ ] Test map quality and consistency
 - [ ] Implement map save/load functionality
 - [ ] Document mapping procedures
@@ -121,24 +121,12 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 - [ ] Configure local costmap (obstacle detection)
 - [ ] Set up path planner (NavFn or Smac Planner)
 - [ ] Configure controller (DWB or TEB)
-- [ ] Implement recovery behaviors
+- [ ] Implement recovery behaviours
 - [ ] Test single waypoint navigation
 - [ ] Test multi-waypoint missions
 - [ ] Tune navigation stack for performance
 
 **Milestone:** Autonomous navigation from point A to point B with obstacle avoidance
-
----
-
-### Phase 6: Testing & Portfolio (Weeks 13-14)
-- [ ] Run full autonomous missions (10+ waypoints)
-- [ ] Record high-quality demo videos
-- [ ] Complete all technical documentation
-- [ ] Write project retrospective blog post
-- [ ] Create resume project description
-- [ ] Prepare for technical interviews
-
-**Milestone:** Portfolio-ready autonomous rover project
 
 ---
 
@@ -196,7 +184,6 @@ This project showcases professional robotics engineering competencies:
 - Real-time performance optimization
 
 **Professional Practices:**
-- Version control (Git/GitHub)
 - Technical documentation
 - Systematic debugging methodology
 - Iterative development process
@@ -230,7 +217,7 @@ After achieving autonomous navigation, planned upgrades include:
 
 **Current Phase:** Phase 0 Complete - Parts Ordered
 
-**Investment:** ~$722 CAD total project cost
+**Investment:** ~$760 CAD total project cost
 
 **Timeline:**
 - Parts ordered: February 17, 2025
@@ -265,16 +252,14 @@ After achieving autonomous navigation, planned upgrades include:
 
 ## 👤 Author
 
-**Arsham Fakhri Noghani**
+**Arsham Faghihnasiri**
 
 Building autonomous systems and learning production ROS2 development.
 
 - 📍 Location: Greater Toronto Area, Ontario, Canada
-- 💼 LinkedIn: [Add your LinkedIn URL]
-- 📧 Email: [Add your email]
+- 💼 LinkedIn: www.linkedin.com/in/arsham-faghihnasiri
+- 📧 Email: arshamfaghihnasiri@gmail.com
 - 🎓 Background: Software Engineering, Robotics
-
-**Note:** This is a learning project built to demonstrate robotics engineering skills for career opportunities in the GTA robotics industry.
 
 ## 📄 License
 
