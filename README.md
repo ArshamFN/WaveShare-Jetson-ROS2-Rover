@@ -130,32 +130,7 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 
 ---
 
-## 📂 Repository Structure
-```
-waveshare-jetson-ros2-rover/
-├── README.md                    # This file
-├── LICENSE                      # MIT License
-├── docs/
-│   ├── hardware/
-│   │   ├── bill-of-materials.md      # Complete parts list with costs
-│   │   ├── assembly-guide.md         # Step-by-step assembly instructions
-│   │   └── wiring-diagram.md         # Electrical connections and schematics
-│   ├── software/
-│   │   ├── setup-guide.md            # ROS2 installation and configuration
-│   │   └── architecture.md           # System architecture and design decisions
-│   └── testing/
-│       └── test-logs.md              # Daily progress, issues, and solutions
-├── src/
-│   ├── rover_bringup/           # Launch files and configurations
-│   ├── rover_description/       # URDF robot model
-│   └── rover_navigation/        # Nav2 parameter files
-├── images/
-│   ├── build/                   # Assembly progress photos
-│   └── testing/                 # Demo videos and test results
-└── cad/                         # Custom 3D printed parts (if any)
-```
-
-## 🎯 Skills Demonstrated
+## Skills Demonstrated
 
 This project showcases professional robotics engineering competencies:
 
@@ -188,7 +163,7 @@ This project showcases professional robotics engineering competencies:
 - Systematic debugging methodology
 - Iterative development process
 
-## 🚀 Future Enhancements (Project #2)
+## Future Enhancements (Project #2)
 
 After achieving autonomous navigation, planned upgrades include:
 
@@ -198,7 +173,7 @@ After achieving autonomous navigation, planned upgrades include:
 - **Advanced Features:** Multi-robot coordination, payload delivery mechanism
 - **Machine Learning:** Reinforcement learning for dynamic environments
 
-## 📚 Documentation
+## Documentation
 
 - [Bill of Materials](docs/hardware/bill-of-materials.md) - Complete parts list with suppliers
 - [Assembly Guide](docs/hardware/assembly-guide.md) - Step-by-step build instructions
@@ -207,11 +182,11 @@ After achieving autonomous navigation, planned upgrades include:
 - [System Architecture](docs/software/architecture.md) - Design decisions and rationale
 - [Test Logs](docs/testing/test-logs.md) - Daily progress and problem-solving
 
-## 🎥 Demo Videos
+## Demo Videos
 
 *Demo videos will be added as milestones are completed*
 
-## 📊 Current Status
+## Current Status
 
 **Last Updated:** February 17, 2025
 
@@ -232,7 +207,7 @@ After achieving autonomous navigation, planned upgrades include:
 4. Prepare workspace and assembly tools
 5. Begin hardware assembly on delivery day
 
-## 🔗 Useful Resources
+## Useful Resources
 
 **Platform Documentation:**
 - [Waveshare Wave Rover Wiki](https://www.waveshare.com/wiki/WAVE_ROVER)
@@ -250,7 +225,7 @@ After achieving autonomous navigation, planned upgrades include:
 - [Robotics Stack Exchange](https://robotics.stackexchange.com/)
 - [r/ROS Subreddit](https://www.reddit.com/r/ROS/)
 
-## 👤 Author
+## Author
 
 **Arsham Faghihnasiri**
 
@@ -261,13 +236,13 @@ Building autonomous systems and learning production ROS2 development.
 - 📧 Email: arshamfaghihnasiri@gmail.com
 - 🎓 Background: Software Engineering, Robotics
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 You are free to use, modify, and distribute this code for educational and commercial purposes.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Waveshare for the Wave Rover platform design
 - NVIDIA for Jetson developer tools and documentation
