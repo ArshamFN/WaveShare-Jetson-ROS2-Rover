@@ -66,12 +66,12 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 ---
 
 ### Phase 1: Hardware Setup (Weeks 2-3)
-- [ ] Unbox and inventory components
-- [ ] Assemble Wave Rover base platform
+- [x] Unbox and inventory components
+- [x] Assemble Wave Rover base platform
 - [ ] Mount Jetson Orin Nano on chassis
 - [ ] Mount RPLidar C1 with custom bracket
-- [ ] Install batteries and test power distribution
-- [ ] Verify ESP32 motor control functionality
+- [x] Install batteries and test power distribution
+- [x] Verify ESP32 motor control functionality
 - [ ] Test encoder feedback
 
 **Milestone:** Fully assembled rover with verified power and motor systems
@@ -79,8 +79,8 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 ---
 
 ### Phase 2: ROS2 Foundation (Weeks 3-4)
-- [ ] Flash JetPack 6.1 to Jetson
-- [ ] Install ROS2 Humble
+- [x] Flash JetPack 6.1 to Jetson
+- [x] Install ROS2 Humble
 - [ ] Configure ESP32-to-ROS2 serial communication bridge
 - [ ] Write motor control node (velocity commands → ESP32)
 - [ ] Implement odometry publisher (encoders → /odom topic)
@@ -202,10 +202,10 @@ After achieving autonomous navigation, planned upgrades include:
 
 **Next Immediate Actions:**
 1. ✅ Components ordered (Wave Rover, Jetson, Lidar, batteries)
-2. Install ROS2 Humble on development machine
-3. Study Waveshare Wave Rover documentation
-4. Prepare workspace and assembly tools
-5. Begin hardware assembly on delivery day
+2. ✅ Install ROS2 Humble on development machine
+3. ✅ Study Waveshare Wave Rover documentation
+4. ✅ Prepare workspace and assembly tools
+5. ✅ Begin hardware assembly on delivery day
 
 ## Useful Resources
 
