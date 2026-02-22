@@ -1,63 +1,57 @@
 #!/usr/bin/env python3
 """
-UART Sanity Check — WAVE ROVER <-> Jetson Orin Nano Super
-Tests serial communication on /dev/ttyTHS1 (UARTA, pins 8 & 10).
-Run this before attempting any ROS2 rover communication.
-
-Usage:
-    python3 uart_sanity_check.py
-    python3 uart_sanity_check.py --port /dev/ttyTHS1
-
-Here's everything it does:
-1. Opens the serial port cleanly — uses the correct settings (dsrdtr=None, setRTS(False), setDTR(False)) that Waveshare's own demo code requires. A naive serial.Serial(port, 115200) call often fails with ESP32 devices because of these flags.
-2. Handles errors gracefully — if the port doesn't exist or you don't have permission, it tells you clearly instead of crashing with a confusing Python traceback.
-3. Passively listens for 3 seconds — doesn't send anything, just listens. This is the most reliable first test because it checks if the ESP32 is broadcasting at all, independent of whether your commands are formatted correctly.
-4. Shows you both raw and decoded output — prints the raw bytes (repr(data)) so you can see exactly what's coming in, then attempts a UTF-8 decode so you can read it if it's valid JSON.
-5. Gives you a diagnostic checklist if nothing comes back — instead of just printing an empty result, it tells you exactly what to check.
-6. Accepts command line arguments — so you can test different ports and baud rates without editing the file, like python3 uart_sanity_check.py --port /dev/ttyTHS2 --baud 9600.
-
+UART Sanity Check - Passive listener for verifying connection to Wave Rover.
+Usage: python3 uart_sanity_check.py [--port /dev/ttyTHS1] [--baud 115200]
 """
 
 import serial
-import time
 import argparse
+import time
 
 def main():
-    parser = argparse.ArgumentParser(description='UART sanity check for WAVE ROVER')
-    parser.add_argument('--port', default='/dev/ttyTHS1', help='Serial port (default: /dev/ttyTHS1)')
-    parser.add_argument('--baud', type=int, default=115200, help='Baud rate (default: 115200)')
+    parser = argparse.ArgumentParser(description='UART Sanity Check for Wave Rover')
+    parser.add_argument('--port', type=str, default='/dev/ttyTHS1', help='Serial port')
+    parser.add_argument('--baud', type=int, default=115200, help='Baud rate')
     args = parser.parse_args()
 
     print(f"Opening {args.port} at {args.baud} baud...")
+    print("Listening for data from rover. Press Ctrl+C to stop.\n")
 
     try:
-        s = serial.Serial(args.port, args.baud, timeout=3, dsrdtr=None)
-        s.setRTS(False)
-        s.setDTR(False)
-        s.flushInput()
-    except Exception as e:
-        print(f"ERROR: Could not open port — {e}")
-        return
+        ser = serial.Serial(
+            port=args.port,
+            baudrate=args.baud,
+            rtscts=True,
+            timeout=2
+        )
 
-    print("Listening for data from rover ESP32 (3 seconds)...")
-    time.sleep(1)
-    data = s.read(500)
-    s.close()
+        no_data_count = 0
 
-    if data:
-        print(f"Received {len(data)} bytes:")
-        print(repr(data))
-        try:
-            print("\nDecoded:")
-            print(data.decode('utf-8'))
-        except:
-            print("(Could not decode as UTF-8 — possible baud rate or wiring issue)")
-    else:
-        print("No data received. Check:")
-        print("  - Is the rover powered on?")
-        print("  - Is the Jetson Nano Adapter (C) connected correctly?")
-        print("  - Is nvgetty disabled? (sudo systemctl disable nvgetty)")
-        print("  - Is UARTA enabled? (sudo /opt/nvidia/jetson-io/jetson-io.py)")
+        while True:
+            line = ser.readline()
+            if line:
+                no_data_count = 0
+                print(f"Raw:     {line}")
+                try:
+                    decoded = line.decode('utf-8').strip()
+                    print(f"Decoded: {decoded}")
+                except UnicodeDecodeError:
+                    print("Decoded: [could not decode as UTF-8]")
+                print()
+            else:
+                no_data_count += 1
+                if no_data_count == 3:
+                    print("No data received. Check:")
+                    print("  - Rover is powered on (OLED should be active)")
+                    print("  - Adapter text-less side faces the driver board")
+                    print("  - Pin 8 (TX) → board TX, Pin 10 (RX) → board RX, GND → GND")
+                    print("  - Jumper wire between Jetson pin 11 and pin 36")
+                    print()
 
-if __name__ == '__main__':
+    except KeyboardInterrupt:
+        print("\nStopped.")
+    finally:
+        ser.close()
+
+if __name__ == "__main__":
     main()
