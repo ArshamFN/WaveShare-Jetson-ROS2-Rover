@@ -5,8 +5,7 @@ Sends JSON commands to the rover's ESP32 and prints responses in real time.
 Run this after uart_sanity_check.py confirms the connection is working.
 
 Usage:
-    python3 uart_terminal.py
-    python3 uart_terminal.py --port /dev/ttyTHS2 --baud 9600
+    Usage: python3 uart_terminal.py [--port /dev/ttyTHS1] [--baud 115200]
 
 Example commands:
     {"T":1,"L":0.2,"R":0.2}   — move forward
@@ -28,63 +27,54 @@ Same as L but for the right side motors.
 """
 
 import serial
-import threading
 import argparse
-import sys
+import threading
 
-def read_loop(ser):
-    """Continuously reads and prints data from the rover."""
+def read_serial(ser):
     while True:
         try:
             line = ser.readline()
             if line:
-                print(f"ROVER: {line.decode('utf-8', errors='replace').strip()}")
-        except Exception:
+                try:
+                    decoded = line.decode('utf-8').strip()
+                    print(f"Received: {decoded}")
+                except UnicodeDecodeError:
+                    print(f"Received (raw): {line}")
+        except serial.SerialException:
             break
 
 def main():
-    parser = argparse.ArgumentParser(description='UART interactive terminal for WAVE ROVER')
-    parser.add_argument('--port', default='/dev/ttyTHS1', help='Serial port (default: /dev/ttyTHS1)')
-    parser.add_argument('--baud', type=int, default=115200, help='Baud rate (default: 115200)')
+    parser = argparse.ArgumentParser(description='UART Terminal for Wave Rover')
+    parser.add_argument('--port', type=str, default='/dev/ttyTHS1', help='Serial port')
+    parser.add_argument('--baud', type=int, default=115200, help='Baud rate')
     args = parser.parse_args()
 
     print(f"Connecting to {args.port} at {args.baud} baud...")
 
-    try:
-        ser = serial.Serial(args.port, args.baud, timeout=1, dsrdtr=None)
-        ser.setRTS(False)
-        ser.setDTR(False)
-        ser.flushInput()
-    except Exception as e:
-        print(f"ERROR: Could not open port — {e}")
-        print("Tip: Run uart_sanity_check.py first to diagnose the connection.")
-        sys.exit(1)
+    ser = serial.Serial(
+        port=args.port,
+        baudrate=args.baud,
+        rtscts=True,
+        timeout=2
+    )
 
-    print("Connected! Type a JSON command and press Enter to send.")
-    print("Press Ctrl+C to exit.\n")
+    print("Connected. Type JSON commands and press Enter. Ctrl+C to quit.\n")
 
-    # Start background thread to print incoming rover data
-    t = threading.Thread(target=read_loop, args=(ser,), daemon=True)
-    t.start()
+    recv_thread = threading.Thread(target=read_serial, args=(ser,))
+    recv_thread.daemon = True
+    recv_thread.start()
 
     try:
         while True:
-            cmd = input("CMD: ").strip()
-            if not cmd:
-                continue
-            if not cmd.endswith('\n'):
-                cmd += '\n'
-            ser.write(cmd.encode('utf-8'))
+            command = input("")
+            if command.strip():
+                ser.write(command.encode() + b'\n')
     except KeyboardInterrupt:
-        print("\nExiting...")
+        print("\nSending stop command...")
+        ser.write(b'{"T":1,"L":0,"R":0}\n')
     finally:
-        # Always stop the rover before closing
-        try:
-            ser.write(b'{"T":1,"L":0,"R":0}\n')
-            print("Sent stop command to rover.")
-        except Exception:
-            pass
         ser.close()
+        print("Connection closed.")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
