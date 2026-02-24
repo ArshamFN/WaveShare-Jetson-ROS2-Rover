@@ -25,9 +25,9 @@
 |------|-----|-------------------|----------|--------|
 | DisplayPort to HDMI Cable (6ft) | 1 | $12.42 | Amazon.ca | ✅ Received |
 | M2.5 40+6mm Female-to-Male Brass Hex Standoff Spacers (20pcs) | 1 | $19.20 | Amazon.ca | ✅ Received |
-| Dual WiFi Antenna + Pigtail (Jetson WiFi Board) | 1 | $15.81 | Amazon.ca | ✅ Received |
+| Dual Band WiFi Antenna Kit + MHF4 IPEX Pigtail Cables (M.2/NGFF, 2x5dBi) | 1 | $15.22 | Amazon.ca | ✅ Received |
 
-**Subtotal:** $47.43 CAD (after tax)
+**Subtotal:** $46.84 CAD (after tax)
 
 ---
 
@@ -42,7 +42,7 @@
 
 ---
 
-## TOTAL PROJECT COST: ~$807 CAD (after tax)
+## TOTAL PROJECT COST: ~$806 CAD (after tax)
 
 ---
 
