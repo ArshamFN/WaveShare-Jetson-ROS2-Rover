@@ -51,4 +51,20 @@ uarta-cts/rts in jetson-io and adding a jumper between pins 11 and 36. UART
 communication fully working — rover moves on command from the Jetson. ✅
 
 **→ [Full session log](2026-02-22-session-002-UART-breakthrough.md)**
+
+---
+
+## Session 003 — 2026-02-22: CAD Design — GRD Cover & RPLidar Mount
+
+**Goal:** Finalize CAD designs for the custom GRD electronics cover and
+RPLidar C1 mounting case while waiting for antenna and standoff spacers to arrive.
+
+**Summary:** Both CAD designs completed in Fusion 360. The GRD cover is a
+functional redesign of the rover's original plastic electronics bay cap, adding
+openings for the 40-pin header, improved OLED visibility, and WiFi antenna cable
+routing. The RPLidar C1 mount was designed from scratch to secure the sensor
+to the rover. No physical assembly this session — parts still in transit.
+
+**→ [Full session log](2026-02-22-session-003-cad-grd-cover-lidar-mount.md)**
+
 ```
