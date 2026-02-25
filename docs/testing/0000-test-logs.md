@@ -13,6 +13,8 @@ dedicated file in this folder with full details.
 | 000 | 2026-02-16 | Project Kickoff & Parts Ordered | ✅ Complete |
 | 001 | 2026-02-21 | Jetson Setup, Remote Access & UART Debugging | ✅ Complete |
 | 002 | 2026-02-22 | UART Debugging & Breakthrough | ✅ Complete |
+| 003 | 2026-02-22 | CAD Design — GRD Cover & RPLidar Mount | ✅ Complete |
+| 004 | 2026-02-25 | Power Debugging, LiDAR Integration & ROS2 Motor Control | ✅ Complete |
 
 ---
 
@@ -66,5 +68,23 @@ routing. The RPLidar C1 mount was designed from scratch to secure the sensor
 to the rover. No physical assembly this session — parts still in transit.
 
 **→ [Full session log](2026-02-22-session-003-cad-grd-cover-lidar-mount.md)**
+
+---
+
+## Session 004 — 2026-02-25: Power Debugging, LiDAR Integration & ROS2 Motor Control
+**Goal:** Resolve power system fault from first full assembly boot, integrate the
+RPLidar C1 into ROS2, and achieve complete rover motor control through the `/cmd_vel`
+topic.
+**Summary:** UPS power fault diagnosed and resolved — root cause was the Jetson's
+Type-C standby draw overloading the 5V buck converter. Power architecture redesigned
+to route both boards through the BAT rail, reserving the 5V output for peripherals.
+Runtime analysis completed for the BENKIA 18650 pack across all Jetson power modes —
+15W mode recommended for SLAM sessions (~56 min runtime). DisplayPort emulator ordered
+to resolve headless NoMachine GPU issue. Persistent udev symlinks established for both
+USB serial devices (`/dev/lidar`, `/dev/rover`). RPLidar C1 driver built from source
+and confirmed publishing live `/scan` data. Rover communication switched to USB serial
+for reliability. `rover_driver` ROS2 node written and deployed — full end-to-end motor
+control via `/cmd_vel` confirmed. ✅
+**→ [Full session log](2026-02-24-session-004-power-architecture-LiDAR-integration-ROS2-motor-control.md)**
 
 ```
