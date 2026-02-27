@@ -12,10 +12,19 @@ required for the Jetson Orin Nano Super integration.
 - Cable routing channels for the Jetson WiFi antenna wires, allowing them to
   pass through to the rear of the rover, where the antennas mount externally.
 
+## Modifications from v1
+
+- Removed opening  to the outer 40-pin header on the General Driver Board.
+- Separated the OLED window from the electronics cover for ease of repair and modifications.
+- Enlarged routing channels to account for both the Jetson WiFi antenna wires and the barrel Jack power cable.
+- Added routing a channel for the USB connections between the GRD and the Jetson.
+
 ## Files
 
-*Files will be uploaded upon completion of v1.*
+*Files uploaded to their corresponding folders*
 
 ## Status
 
-Active design — v1 in progress.
+Active design:
+- v1 *DONE*
+- v2 *DONE*
