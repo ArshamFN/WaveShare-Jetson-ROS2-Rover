@@ -15,6 +15,7 @@ dedicated file in this folder with full details.
 | 002 | 2026-02-22 | UART Debugging & Breakthrough | ✅ Complete |
 | 003 | 2026-02-22 | CAD Design — GRD Cover & RPLidar Mount | ✅ Complete |
 | 004 | 2026-02-25 | Power Debugging, LiDAR Integration & ROS2 Motor Control | ✅ Complete |
+| 005 | 2026-02-27 | URDF, tf2, and First SLAM Map | ✅ Complete |
 
 ---
 
@@ -87,4 +88,21 @@ for reliability. `rover_driver` ROS2 node written and deployed — full end-to-e
 control via `/cmd_vel` confirmed. ✅
 **→ [Full session log](2026-02-24-session-004-power-architecture-LiDAR-integration-ROS2-motor-control.md)**
 
-```
+---
+
+## Session 005 — 2026-02-27: URDF, tf2, and First SLAM Map
+**Goal:** Create the `robot_description` ROS2 package, configure SLAM Toolbox,
+and achieve a live occupancy grid map in RViz2.
+
+**Summary:** Authored a Unified Robot Description Format (URDF) with accurate
+real-world LiDAR transform measurements — 0.1685m z offset derived from physical
+measurement, with zero x/y offsets by deliberate mechanical design. Verified the
+tf2 transform tree with `tf2_tools view_frames`. Installed SLAM Toolbox and wrote
+a full `slam_toolbox.yaml` configuration. Deployed a SLAM launch file with a
+static `odom → base_link` placeholder for future wheel odometry. Full pipeline
+confirmed: RPLidar C1 → `/scan` → SLAM Toolbox → `/map` → RViz2, with a live
+occupancy grid map of the room visible. ✅
+
+**→ [Full session log](2026-02-27-session-005-URDF-tf2-and-first-SLAM-map.md)**
+
+---
