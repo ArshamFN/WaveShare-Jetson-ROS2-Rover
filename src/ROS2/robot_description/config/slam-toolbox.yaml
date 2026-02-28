@@ -1,0 +1,30 @@
+slam_toolbox:
+  ros__parameters:
+    # Topics and frames
+    scan_topic: /scan
+    base_frame: base_link
+    odom_frame: odom
+    map_frame: map
+    # Mode
+    mode: mapping
+    # Solver
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    # Scan matching
+    minimum_travel_distance: 0.1
+    minimum_travel_heading: 0.2
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1
+    distance_penalty: 0.5
+    angle_penalty: 1.0
+    # Map
+    resolution: 0.05
+    max_laser_range: 12.0
+    minimum_laser_range: 0.2
+    # Performance
+    use_scan_matching: true
+    use_scan_barycenter: true
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true
