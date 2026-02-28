@@ -43,6 +43,9 @@ installed successfully. Rover wired to Jetson — no existing documentation for 
 hardware combination, so the process was pieced together from multiple sources.
 UART communication established but all received data was garbled. Continued in Session 002.
 
+![Jetson first mounted on rover](../../images/testing/session-001/session-001-jetson-first-mount-on-rover.JPG)
+![Jetson first mounted on rover](../../images/testing/session-001/session-001-jetson-first-mounted-on-rover.JPG)
+
 **→ [Full session log](2026-02-20-session-001-jetson-setup-uart-debugging.md)**
 
 ---
@@ -58,6 +61,9 @@ corruption bug that requires RTS/CTS hardware flow control. Fixed by enabling
 uarta-cts/rts in jetson-io and adding a jumper between pins 11 and 36. UART
 communication fully working — rover moves on command from the Jetson. ✅
 
+![Jetson Nano Adapter (C) wiring closeup](../../images/testing/session-002/session-002-jetson-nano-adapter-c-wiring.JPG)
+![Jetson 11&36 connection](../../images/testing/session-002/session-002-jetson-11&36-connection.JPG)
+
 **→ [Full session log](2026-02-22-session-002-UART-breakthrough.md)**
 
 ---
@@ -72,6 +78,8 @@ functional redesign of the rover's original plastic electronics bay cap, adding
 openings for the 40-pin header, improved OLED visibility, and WiFi antenna cable
 routing. The RPLidar C1 mount was designed from scratch to secure the sensor
 to the rover. No physical assembly this session — parts still in transit.
+
+![Custom GRD cover v1 installed](../../images/testing/session-003/session-003-custom-grd-cover-v1-installed.jpg.JPG)
 
 **→ [Full session log](2026-02-22-session-003-cad-grd-cover-lidar-mount.md)**
 
@@ -91,6 +99,9 @@ USB serial devices (`/dev/lidar`, `/dev/rover`). RPLidar C1 driver built from so
 and confirmed publishing live `/scan` data. Rover communication switched to USB serial
 for reliability. `rover_driver` ROS2 node written and deployed — full end-to-end motor
 control via `/cmd_vel` confirmed. ✅
+
+![Rover with Jetson mounted, no LiDAR](../../images/testing/session-004/session-004-rover-jetson-mounted-no-lidar.jpg.JPG)
+
 **→ [Full session log](2026-02-24-session-004-power-architecture-LiDAR-integration-ROS2-motor-control.md)**
 
 ---
@@ -107,6 +118,8 @@ a full `slam_toolbox.yaml` configuration. Deployed a SLAM launch file with a
 static `odom → base_link` placeholder for future wheel odometry. Full pipeline
 confirmed: RPLidar C1 → `/scan` → SLAM Toolbox → `/map` → RViz2, with a live
 occupancy grid map of the room visible. ✅
+
+![First SLAM map — live occupancy grid in RViz2](../../images/testing/session-005/session-005-first-slam-map.png)
 
 **→ [Full session log](2026-02-27-session-005-URDF-tf2-and-first-SLAM-map.md)**
 
