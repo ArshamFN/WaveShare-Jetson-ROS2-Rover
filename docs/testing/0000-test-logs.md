@@ -26,6 +26,11 @@ dedicated file in this folder with full details.
 Repository created and documentation structure set up. All components ordered
 for ~$760 CAD total. No issues encountered.
 
+![BENKIA 18650 cells](../../images/build/unboxing/session-000-benkia-18650-cells.jpg.JPG)
+![Wave Rover box contents](../../images/build/unboxing/session-000-wave-rover-contents.jpg.JPG)
+![Jetson Orin Nano box contents](../../images/build/unboxing/session-000-jetson-orin-nano-contents.jpg.JPG)
+![RPLidar C1 unit and USB adapter](../../images/build/unboxing/session-000-rplidar-c1-unit-and-adapter.jpg.JPG)
+
 ---
 
 ## Session 001 — 2026-02-21: Jetson Setup, Remote Access & UART Debugging
