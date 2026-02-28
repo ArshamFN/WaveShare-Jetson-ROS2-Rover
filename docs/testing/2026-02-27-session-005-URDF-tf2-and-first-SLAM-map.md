@@ -227,6 +227,7 @@ frame with no motion correction. Map quality will improve significantly once
 the rover is driven through the environment and real odometry is introduced.
 
 **Full pipeline confirmed:**
+![First SLAM map — live occupancy grid in RViz2](../../images/testing/session-005/session-005-first-slam-map.png)
 ```
 RPLidar C1 → /scan → SLAM Toolbox → /map → RViz2 ✅
 ```
