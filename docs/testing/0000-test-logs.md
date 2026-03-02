@@ -16,6 +16,7 @@ dedicated file in this folder with full details.
 | 003 | 2026-02-22 | CAD Design — GRD Cover & RPLidar Mount | ✅ Complete |
 | 004 | 2026-02-25 | Power Debugging, LiDAR Integration & ROS2 Motor Control | ✅ Complete |
 | 005 | 2026-02-27 | URDF, tf2, and First SLAM Map | ✅ Complete |
+| 006 | 2026-03-01 | Hardware Assessment & Platform Migration: Wave Rover → UGV02 | ✅ Complete |
 
 ---
 
@@ -80,7 +81,7 @@ routing. The RPLidar C1 mount was designed from scratch to secure the sensor
 to the rover. No physical assembly this session — parts still in transit.
 
 ![Custom GRD cover v1 installed](../../images/testing/session-003/session-003-custom-grd-cover-v1-installed.jpg.JPG)
-![Custom Lidar C1 Mounting Case Printed](../../images/testing/session-003/session-003-lidar-mounting-case.jpg)
+![Custom lidar mounting case 3D-printed](../../images/testing/session-003/session-003-lidar-mounting-case.jpg)
 
 **→ [Full session log](2026-02-22-session-003-cad-grd-cover-lidar-mount.md)**
 
@@ -123,5 +124,35 @@ occupancy grid map of the room visible. ✅
 ![First SLAM map — live occupancy grid in RViz2](../../images/testing/session-005/session-005-first-slam-map.png)
 
 **→ [Full session log](2026-02-27-session-005-URDF-tf2-and-first-SLAM-map.md)**
+
+---
+
+## Session 006 — 2026-03-01: Hardware Assessment & Platform Migration: Wave Rover → UGV02
+
+**Goal:** Begin implementing encoder-based wheel odometry to replace the static
+`odom → base_link` transform in `slam.launch.py`.
+
+![Wave Rover vs UGV02 side-by-side](../../images/testing/session-006-migration/Session-006-robot-comparison-side-by-side.jpg)
+*Left: UGV02 with DCGM-370 encoder motors.  Right: Wave Rover with N20 motors.*
+
+**Summary:** Investigation into the GRD firmware revealed that the Wave Rover's N20 motors
+have no encoders — the GRD encoder commands are only functional on the UGV01 product.
+Simultaneously, the Wave Rover was chronically underpowered under the Jetson's payload,
+struggling to move on carpet and stalling below full throttle. Three remediation paths were
+evaluated: open-loop odometry integration (rejected — no meaningful improvement over the
+static transform), partial motor swap to encoder-capable N20s (rejected — encoders on an
+underpowered chassis produce unreliable ground truth), and full platform replacement
+(selected). The Waveshare UGV02 was chosen after reviewing the official wiki, which
+explicitly confirms encoder motors (`DCGM-370-12V-EN-333RPM`, encoder confirmed by EN
+designation and visible hall-effect sensor connector) and a Multi-Functional Driver board
+with native ROS continuous feedback mode. The UGV02 was received and the full hardware
+migration was completed: Jetson, RPLidar C1, and the custom BAT-rail power wire from
+Session 004 all transferred to the new chassis. Both 3D-printed parts — the RPLidar
+mounting case and GRD top cover — fit the new chassis without modification. A video
+documenting the technical reasoning and hardware transformation was recorded and edited.
+
+![UGV02 fully assembled with migrated hardware](../../images/testing/session-006-migration/session-006-UGV02-front.jpg)
+
+**→ [Full session log](2026-02-28-session-006-hardware-assessment-platform-migration.md)**
 
 ---
