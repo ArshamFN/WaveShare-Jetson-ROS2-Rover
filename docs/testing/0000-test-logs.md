@@ -80,6 +80,7 @@ routing. The RPLidar C1 mount was designed from scratch to secure the sensor
 to the rover. No physical assembly this session — parts still in transit.
 
 ![Custom GRD cover v1 installed](../../images/testing/session-003/session-003-custom-grd-cover-v1-installed.jpg.JPG)
+![Custom Lidar C1 Mounting Case Printed](../../images/testing/session-003/session-003-lidar-mounting-case.jpg)
 
 **→ [Full session log](2026-02-22-session-003-cad-grd-cover-lidar-mount.md)**
 
