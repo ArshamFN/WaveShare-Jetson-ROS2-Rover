@@ -1,6 +1,6 @@
 # Session 006 — Hardware Assessment & Platform Migration: Wave Rover → UGV02
 
-**Date:** 2026-02-28  
+**Date:** 2026-03-01  
 **Status:** ✅ Complete
 
 ---
@@ -26,8 +26,6 @@ to `/odom`.
 5. Selected the UGV02 as the replacement platform based on documented hardware evidence
 6. Received the UGV02 and completed full hardware migration: Jetson, RPLidar C1, and
    custom BAT-rail power wire all transferred to the new chassis
-7. Recorded and edited a video documenting the reasoning, options, and hardware
-   transformation process
 
 ---
 
@@ -71,6 +69,10 @@ This compounded the odometry problem: even if encoders had been retrofitted, inc
 wheel contact and stall conditions on carpet would have produced unreliable tick counts,
 making closed-loop odometry nearly as bad as open-loop on this platform.
 
+![Wave Rover vs UGV02 — side-by-side underside comparison](../../images/testing/session-006-migration/Session-006-robot-comparison-side-by-side.jpg)
+*Left: Wave Rover underside with N20 motors. Right: UGV02 underside with DCGM-370 encoder
+motors. The motor size difference is the torque argument made visible.*
+
 ---
 
 ## Platform Evaluation
@@ -82,9 +84,9 @@ technical viability, and long-term utility across future projects.
 |---|---|---|---|
 | **Cost** | $0 | ~$50 CAD (4× encoder motors) | ~$195 CAD net ($370 UGV02 − $175 Wave Rover return) |
 | **Time Cost** | Negligible | ~2 days (sourcing, shipping, swap) | ~1 day (hardware migration) |
-| **Pros** | Zero cost, zero downtime | Relatively inexpensive; no changes to chassis geometry, URDF, or software configuration | 4× the motor torque; MFD board with 4 encoder ports and ROS-native firmware; JGB37-520 motors with encoders included; 4 kg payload rating |
+| **Pros** | Zero cost, zero downtime | Relatively inexpensive; no changes to chassis geometry, URDF, or software configuration | Significantly higher motor torque; MFD board with 4 encoder ports and ROS-native firmware; DCGM-370 encoder motors included; 4 kg payload rating |
 | **Cons** | Odometry is immediately and severely inaccurate — drift accumulates from the first wheel rotation with no mechanism for correction | Still underpowered under Jetson payload; GRD only exposes 2 encoder ports; wheel slip on an undersized chassis makes even encoder readings unreliable | Cost |
-| **Future Outlook** | Not viable beyond a demo. Mapping quality would degrade rapidly in any real environment and the approach cannot carry forward to future projects | Not future-proof — addresses only this project, on this chassis, with this payload. Not expandable beyond the GRD's hardware limitations | Directly future-proofs the platform. The MFD board and JGB37-520 motor class are the foundation of Waveshare's ROS-oriented product line, making this chassis suitable for the SLAM work ahead and the computer vision projects planned after |
+| **Future Outlook** | Not viable beyond a demo. Mapping quality would degrade rapidly in any real environment and the approach cannot carry forward to future projects | Not future-proof — addresses only this project, on this chassis, with this payload. Not expandable beyond the GRD's hardware limitations | Directly future-proofs the platform. The MFD board and DCGM-370 motor class are the foundation of Waveshare's ROS-oriented product line, making this chassis suitable for the SLAM work ahead and the computer vision projects planned after |
 | **Outcome** | ❌ Rejected | ❌ Rejected | ✅ Selected |
 
 ### Decision Rationale
@@ -108,33 +110,45 @@ the projects that follow.
 ## Platform Selection: UGV02
 
 ### Research Process
-I pulled the official Waveshare UGV02 wiki and reviewed it in full. Two key findings
-confirmed the UGV02 as the correct choice:
+I reviewed the official Waveshare UGV02 wiki in full. Two key findings confirmed the UGV02
+as the correct choice:
 
-**Motors:** The wiki states explicitly under the CMD_SPEED_CTRL JSON command:
+**Motors:** The UGV02 wiki states explicitly under the CMD_SPEED_CTRL JSON command:
 *"The product model is UGV02, the motor comes with encoder."*
-The motors are JGB37-520 DC geared motors — a 37mm diameter industrial-grade format
-with the following published specifications:
+The motors installed on the received unit are labeled `DCGM-370-12V-EN-333RPM`. The `EN`
+designation in the part number confirms encoder-equipped. The DCGM-370 is Waveshare's
+branded variant of the JGB37-520 motor class — a 37mm-diameter industrial-grade DC geared
+motor. Confirmed and cross-referenced specifications:
 
-| Parameter | Value |
-|---|---|
-| Rated voltage | 12V |
-| Rated torque | 2.4 kg·cm |
-| Stall torque | 10.4 kg·cm |
-| Rated speed | 51 RPM |
-| No-load speed | 66 RPM |
-| Rated current | 0.3A |
-| Stall current | 1.4A |
-| Motor size | 37×52mm |
+![DCGM-370-12V-EN-333RPM motor label](../../images/testing/session-006-migration/session-006-DCGM-370-motor.jpg)
+*Motor label on the installed hardware. `EN` confirms encoder-equipped. The 37mm can body
+is substantially larger than the N20 used on the Wave Rover.*
 
-This is a fundamentally different motor class than the N20. The stall torque alone
-(10.4 kg·cm vs N20 estimates under 1 kg·cm) resolves the underpowering issue entirely.
+| Parameter | Value | Source |
+|---|---|---|
+| Model | DCGM-370-12V-EN-333RPM | Motor label (physical) |
+| Rated voltage | 12V | Motor label (physical) |
+| No-load speed | 333 RPM | Motor label (physical) |
+| Encoder type | AB dual-phase incremental magnetic Hall | JGB37-520 class spec |
+| Encoder PPR | 20 PPR at output shaft | JGB37-520 333RPM class spec |
+| Rated torque | ~1.5 kg·cm | JGB37-520 333RPM class spec |
+| Stall torque | ~5.0 kg·cm | JGB37-520 333RPM class spec |
+| Rated current | ~1.0A | JGB37-520 333RPM class spec |
+| Stall current | ~2.3A | JGB37-520 333RPM class spec |
+| Motor diameter | 37mm | Physical measurement class |
+| Encoder connector | XH2.54-6PIN | Waveshare DCGM series standard |
 
-**Driver Board:** The firmware screenshot in the UGV02 wiki shows the flash tool loading
-binaries named `ROS_Driver_UGV_Rover.ino.bin`. This is the Multi-Functional Driver board
-(MFD), not the General Driver for Robots (GRD). The MFD board provides 4× encoder motor
-ports and is explicitly designed for ROS integration, including a continuous serial feedback
-mode (`{"T":131,"cmd":1}`) documented as *"suitable for the ROS system."*
+The stall torque (~5.0 kg·cm) is conservatively 5× the N20's estimated ceiling, which
+resolves the underpowering issue. Exact Waveshare-published specs for the DCGM-370
+specifically will be confirmed before the odometry PPR calculations in Session 007.
+
+![Encoder hall-effect sensor connector at wheel hub](../../images/testing/session-006-migration/session-006-N20-motor.jpg)
+*N20 motor on the Wave Rover*
+
+**Driver Board:** The UGV02 ships with the Multi-Functional Driver board (MFD), confirmed
+by the firmware binary name `ROS_Driver_UGV_Rover.ino.bin` visible in the Waveshare flash
+tool. The MFD provides 4× encoder motor ports and includes a continuous serial feedback
+mode (`{"T":131,"cmd":1}`) explicitly described as *"suitable for the ROS system."*
 
 **Payload:** The UGV02 is rated at 4 kg — well above the combined weight of the Jetson
 Orin Nano Super Developer Kit, UPS Module 3S, RPLidar C1, and mounting hardware.
@@ -146,9 +160,8 @@ Orin Nano Super Developer Kit, UPS Module 3S, RPLidar C1, and mounting hardware.
 - Entire ROS2 software stack (SLAM Toolbox config, launch files, `rover_driver` node
   architecture, `robot_description` package)
 - All documentation methodology and GitHub structure
-- **RPLidar C1 mounting case** (3D-printed) — fits the UGV02 chassis geometry without
-  modification
-- **GRD top cover** (3D-printed) — fits the UGV02 chassis like a glove; no redesign required
+- **RPLidar C1 mounting case** (3D-printed) — fits the UGV02 chassis without modification
+- **GRD top cover** (3D-printed) — fits the UGV02 chassis without modification
 
 The two custom-printed parts surviving the platform transition was an unexpected outcome.
 Both designs were modeled around the Waveshare board and sensor geometry rather than the
@@ -170,9 +183,12 @@ UGV02 chassis:
 
 - Jetson Orin Nano Super Developer Kit
 - RPLidar C1 (via Type-C USB adapter directly to Jetson)
-- UPS Module 3S
 - Custom BAT-rail power wire (fabricated in Session 004 to route Jetson power through
-  the 9–12.6V BAT rail, keeping the 5V rail reserved for GRD/MFD peripherals only)
+  the 9–12.6V BAT rail, keeping the 5V rail reserved for MFD peripherals only)
+
+![Jetson wiring inside UGV02 chassis](../../images/testing/session-006-migration/session-006-Jetson-wiring.jpg)
+*Custom BAT-rail power wire transferred and reconnected inside the UGV02 chassis.
+The Session 004 power architecture carries forward unchanged.*
 
 ### New Board: Multi-Functional Driver (MFD)
 The UGV02's onboard driver is the MFD, replacing the GRD used on the Wave Rover.
@@ -184,7 +200,7 @@ Key differences relevant to this project:
 | Firmware | ugv_base_general | ugv_base_ros |
 | Continuous feedback | No | Yes — `{"T":131,"cmd":1}` |
 | ROS integration | Manual JSON bridge | Native ROS mode |
-| Motor type (shipped) | N20, no encoders | JGB37-520, encoders included |
+| Motor type (shipped) | N20, no encoders | DCGM-370-12V-EN-333RPM, encoders included |
 
 ---
 
@@ -195,7 +211,13 @@ I recorded a video for this session covering:
 - The three options evaluated and why options A and B were rejected
 - Time-lapse footage of the hardware disassembly and reassembly
 
-![Session 006 Migration](images/testing/session-006-migration/session-006-migration-decision.mp4)
+![Session 006 video](../../images/testing/session-006-migration/session-006.mp4)
+
+![UGV02 fully assembled — front](../../images/testing/session-006-migration/session-006-UGV02-front.jpg)
+
+![UGV02 fully assembled — rear](../../images/testing/session-006-migration/session-006-UGV02-rear.jpg)
+*UGV02 with Jetson Orin Nano Super and RPLidar C1 fully migrated and
+mounted. The 3D-printed LiDAR case and top cover were transferred without modification.*
 
 ---
 
@@ -220,9 +242,10 @@ What changed is the mechanical foundation that the software runs on.
 
 ## Next Steps
 
-- [ ] Verify MFD JSON command compatibility with existing `rover_driver` node
-- [ ] Re-measure URDF parameters: wheelbase, wheel radius, LiDAR mounting height
-- [ ] Update `robot_description` URDF with UGV02 geometry
-- [ ] Update udev rules for new `/dev/rover` device if USB ID differs from GRD
-- [ ] Implement encoder-based wheel odometry using MFD continuous feedback mode
-- [ ] Replace static `odom → base_link` transform in `slam.launch.py` with real odometry
+- Confirm DCGM-370 torque and encoder PPR specs directly against Waveshare documentation
+- Verify MFD JSON command compatibility with existing `rover_driver` node
+- Re-measure URDF parameters: wheelbase, wheel radius, LiDAR mounting height
+- Update `robot_description` URDF with UGV02 geometry
+- Update udev rules for new `/dev/rover` device if USB ID differs from GRD
+- Implement encoder-based wheel odometry using MFD continuous feedback mode
+- Replace static `odom → base_link` transform in `slam.launch.py` with real odometry
