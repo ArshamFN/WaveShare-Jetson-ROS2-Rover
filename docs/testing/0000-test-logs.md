@@ -17,7 +17,8 @@ dedicated file in this folder with full details.
 | 004 | 2026-02-25 | Power Debugging, LiDAR Integration & ROS2 Motor Control | ✅ Complete |
 | 005 | 2026-02-27 | URDF, tf2, and First SLAM Map | ✅ Complete |
 | 006 | 2026-03-01 | Hardware Assessment & Platform Migration: Wave Rover → UGV02 | ✅ Complete |
-| 007 | 2026-03-02 | First Teleoperated SLAM Run & Odometry Calibration | ⚠️ Partial |
+| 007 | 2026-03-02 | Linear Scale Calibration & TRACK_WIDTH Investigation | ✅ Complete |
+| 008 | 2026-03-03 | Automated Calibration Script & Battery Sag Discovery | ✅ Complete |
 
 ---
 
@@ -176,5 +177,24 @@ passive wheels further complicated all tests.
 ![TRACK_WIDTH SLAM issue](../../images/testing/session-007/session-007-TRACK_WIDTH-SLAM-issue.png)
 
 **→ [Full session log](2026-03-02-session-007-odometry-calibration.md)**
+
+---
+
+## Session 008 — 2026-03-03: Automated Calibration Script & Battery Sag Discovery
+**Goal:** Determine `TRACK_WIDTH` through automated sensor-referenced calibration and
+attempt teleop SLAM mapping with corrected odometry.
+
+**Summary:** Wrote a 3-phase Python calibration script: accelerometer bias calibration at
+rest, gyroscope scale calibration via manual 360° rotation, and an automated 90° CW motor
+turn with simultaneous gyro and encoder recording to compute `TRACK_WIDTH` directly. The
+script's raw output revealed that the MFD board's `odl`/`odr` labels are physically
+reversed — the encoder swap was causing heading to be reported with the wrong sign on every
+turn. After correcting the swap, `TRACK_WIDTH` was determined to be 0.0456 m. Subsequent
+SLAM mapping attempt failed due to battery voltage sag causing asymmetric motor output and
+unreliable encoder timing. This led to the architectural decision to use gyroscope-based
+heading combined with encoder-based linear displacement (gyrodometry) for Session 009,
+eliminating `TRACK_WIDTH` as a calibration parameter entirely.
+
+**→ [Full session log](2026-03-03-session-008-calibration-script-encoder-swap.md)**
 
 ---
