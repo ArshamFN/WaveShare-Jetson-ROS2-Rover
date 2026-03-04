@@ -1,6 +1,6 @@
 # Session 006 — Hardware Assessment & Platform Migration: Wave Rover → UGV02
 
-**Date:** 2026-03-01  
+**Date:** 2026-02-28  
 **Status:** ✅ Complete
 
 ---
