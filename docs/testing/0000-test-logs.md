@@ -17,6 +17,7 @@ dedicated file in this folder with full details.
 | 004 | 2026-02-25 | Power Debugging, LiDAR Integration & ROS2 Motor Control | ✅ Complete |
 | 005 | 2026-02-27 | URDF, tf2, and First SLAM Map | ✅ Complete |
 | 006 | 2026-03-01 | Hardware Assessment & Platform Migration: Wave Rover → UGV02 | ✅ Complete |
+| 007 | 2026-03-02 | First Teleoperated SLAM Run & Odometry Calibration | ⚠️ Partial |
 
 ---
 
@@ -154,5 +155,26 @@ documenting the technical reasoning and hardware transformation was recorded and
 ![UGV02 fully assembled with migrated hardware](../../images/testing/session-006-migration/session-006-UGV02-front.jpg)
 
 **→ [Full session log](2026-02-28-session-006-hardware-assessment-platform-migration.md)**
+
+---
+
+## Session 007 — 2026-03-02: First Teleoperated SLAM Run & Odometry Calibration
+
+**Goal:** Run the full SLAM stack for the first time with a teleoperated robot and
+produce a geometrically accurate map of the room.
+
+**Summary:** Linear scale factor successfully calibrated from 0.03125 to 0.01 via a
+1-metre drive test (0.34% error). With correct linear scale, SLAM produced its first
+coherent room outline. Rotational calibration proved much harder: physical ruler
+measurement of wheel spacing (0.172m) was revealed to be the wrong approach —
+`TRACK_WIDTH` refers to the kinematic turning diameter, not the physical wheel gap.
+Six values were tested through L-shape map analysis with no reliable result. The root
+problem is that every calibration method derived rotation from the same encoders being
+calibrated, with no independent ground truth. Crab-walking from the wobbly middle
+passive wheels further complicated all tests.
+
+![TRACK_WIDTH SLAM issue](../../images/testing/session-007/session-007-TRACK_WIDTH-SLAM-issue.png)
+
+**→ [Full session log](2026-03-02-session-007-odometry-calibration.md)**
 
 ---
