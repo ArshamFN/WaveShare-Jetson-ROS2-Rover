@@ -1,6 +1,6 @@
 # Autonomous Rover - Jetson + ROS2 Navigation
 
-A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NVIDIA Jetson Orin Nano Super, implementing ROS2 Humble navigation and SLAM.
+A 4WD autonomous ground robot built on the Waveshare UGV02 platform with NVIDIA Jetson Orin Nano Super, implementing ROS2 Humble navigation and SLAM.
 
 ![Project Status](https://img.shields.io/badge/status-in%20progress-yellow)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)
@@ -20,23 +20,26 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 ## Hardware Platform
 
 ### Core Components
-- **Platform:** Waveshare Wave Rover (4WD skid-steer chassis)
+- **Platform:** Waveshare UGV02 (4WD skid-steer chassis)
 - **Compute:** NVIDIA Jetson Orin Nano Super Developer Kit (8GB RAM, 67 TOPS AI)
-- **Sensors:** Slamtec RPLidar C1 (16m range, 10Hz, DTOF technology)
-- **Power:** 3× BENKIA 18650 3500mAh cells in series via WaveShare UPS Module 3S
-- **Motor Control:** Onboard ESP32 (General Driver Board) via USB serial
+- **Sensors:** Slamtec RPLidar C1 (12m range, 10Hz, TOF technology)
+- **Power:** 3× 18650 cells in series via WaveShare UPS Module 3S
+- **Motor Control:** Multi-Functional Driver (MFD) board via USB serial (`/dev/ttyACM0`)
 
 ### Technical Specifications
 
 | Component | Specification |
 |-----------|---------------|
-| **Drivetrain** | 4× N20 motors, skid-steer kinematics |
+| **Drivetrain** | 4× DCGM-370-12V-EN-333RPM motors, skid-steer kinematics |
+| **Encoder Resolution** | ~20 PPR (front wheels only; rear wheels unencoded) |
+| **Motor Stall Torque** | ~5.0 kg·cm |
 | **CPU** | 6-core ARM Cortex-A78AE @ 1.7GHz |
 | **GPU** | 512 CUDA cores + Tensor cores (67 TOPS) |
 | **RAM** | 8GB LPDDR5 |
-| **LiDAR Range** | 16m max (Standard scan mode) |
+| **LiDAR Range** | 12m max (white objects); 6m (black objects) |
 | **LiDAR Scan Rate** | 5kHz sample rate @ 10Hz rotation |
-| **Light Resistance** | 30,000 lux (outdoor capable) |
+| **LiDAR Angular Resolution** | 0.72° typical |
+| **Light Resistance** | 40,000 lux |
 | **Battery Pack** | 3S 18650, 11.1V nominal, 12.6V full charge |
 
 ### Power Architecture
@@ -44,8 +47,8 @@ A 4WD autonomous ground robot built on the Waveshare Wave Rover platform with NV
 | Component | Power Source |
 |-----------|-------------|
 | Jetson Orin Nano Super | BAT rail (9–12.6V) via 5.5mm barrel jack |
-| General Driver Board (ESP32) | BAT rail (9–12.6V) direct |
-| RPLidar C1 | Jetson Orin Nano Super USB Port |
+| MFD Board | BAT rail (9–12.6V) direct |
+| RPLidar C1 | Jetson Orin Nano Super USB port |
 
 ### Runtime Estimates (15W Jetson mode, 25% real-world derating applied)
 
@@ -62,56 +65,82 @@ with sufficient runtime for a full mapping run.
 - **Operating System:** Ubuntu 22.04 LTS (JetPack 6.2.1)
 - **ROS Distribution:** ROS2 Humble Hawksbill
 - **Navigation Framework:** Nav2 (Navigation2 stack)
-- **SLAM Algorithm:** slam_toolbox
+- **SLAM Algorithm:** slam_toolbox (synchronous mapping mode, CeresSolver)
 - **Visualization:** RViz2
 - **Development Languages:** Python 3.10, C++17
 
 ## Current Status
 
-**Last Updated:** February 25, 2026
+**Last Updated:** March 7, 2026
 
-The rover is fully assembled and operational. ROS2 motor control is confirmed working —
-publishing to `/cmd_vel` drives the rover. The RPLidar C1 is publishing live 360° scan
-data on the `/scan` topic. The platform is ready for SLAM configuration.
+The rover is fully assembled and operational with a complete ROS2 navigation stack. Gyrodometry
+is live — the `rover_driver` node fuses the MFD's onboard gyroscope for heading with
+encoder-averaged linear displacement, eliminating the need for a track width constant entirely.
+The first proper SLAM map has been produced and confirmed using this odometry architecture.
 
 ### Completed Milestones
 
 **Hardware:**
-- ✅ Full mechanical assembly with custom 3D printed GRD cover and RPLidar mount
+- ✅ Full mechanical assembly with custom 3D-printed MFD cover and RPLidar mount
 - ✅ Power architecture designed and validated — both boards on BAT rail
-- ✅ Persistent USB device symlinks: `/dev/lidar` (RPLidar C1), `/dev/rover` (GRD)
+- ✅ Persistent USB device symlinks: `/dev/lidar` (RPLidar C1), `/dev/rover` (MFD board)
+- ✅ Platform migration from Wave Rover to UGV02 (motivated by encoder availability)
 
 **Software:**
 - ✅ JetPack 6.2.1 flashed and configured
 - ✅ ROS2 Humble installed and verified
 - ✅ Remote access via PuTTY (SSH) and NoMachine (desktop)
 - ✅ RPLidar C1 driver built from source — live `/scan` topic confirmed
-- ✅ `rover_driver` ROS2 node — full `/cmd_vel` to GRD JSON bridge operational
+- ✅ `rover_driver` ROS2 node — full `/cmd_vel` to MFD JSON bridge operational
+- ✅ `robot_description` package — URDF with accurate `base_link → laser` transform (0.1685m z offset)
+- ✅ SLAM Toolbox configured in synchronous mapping mode with CeresSolver
+- ✅ Encoder odometry calibrated: `TRACK_WIDTH = 0.0456 m` (gyroscope-referenced, 3-phase calibration script)
+- ✅ Gyrodometry implemented: gyroscope (`gz`) for heading, encoder average `(odl + odr) / 2` for linear displacement — `TRACK_WIDTH` eliminated from odometry entirely
+- ✅ First proper SLAM map produced with gyrodometry active
 
 ### Known Hardware Notes
 
+- **MFD encoder wiring swap:** The `odl`/`odr` odometry fields in the MFD's T:1001 feedback
+  packet are physically reversed — left and right encoder readings are swapped on the board.
+  All odometry code accounts for this swap.
+- **Front-wheel-only encoding:** Only the front axle motors carry encoders. Rear wheels are
+  passive and unencoded. Odometry is computed from front wheel data only.
+- **Battery sag under hard acceleration:** Commanding all four motors from a standstill at
+  full speed causes a simultaneous peak current draw that can sag the battery below the
+  Jetson's minimum operating voltage, triggering a protective shutdown. Gradual acceleration
+  from rest keeps current draw within safe limits. A software acceleration limiter in
+  `rover_driver` is the planned permanent mitigation.
 - **ttyTHS1 UART bug:** The Jetson Orin Nano has a known data corruption bug on `/dev/ttyTHS1`
   requiring RTS/CTS hardware flow control. See Session 002 log for the full fix.
-  Rover communication currently uses the GRD's dedicated USB serial port (`/dev/rover`)
-  for reliability.
-- **Jetson Nano Adapter (C) orientation:** The text-less side must face the GRD's 40-pin
-  header. Reversed insertion holds the ESP32's boot pin at the wrong voltage.
+  Rover communication uses the MFD's dedicated USB serial port (`/dev/rover`) for reliability.
 - **UPS power rail routing:** The Jetson must be powered from the BAT rail via barrel jack,
   not the 5V regulated output. The 5V buck converter cannot handle the combined load of
-  the GRD and Jetson simultaneously.
+  the MFD board and Jetson simultaneously.
 
 ## ROS2 Packages
 
 ### rover_driver
-A ROS2 Python node that bridges the standard `/cmd_vel` topic to the Wave Rover's
-JSON-over-serial protocol. Subscribes to `geometry_msgs/Twist`, applies unicycle drive
+A ROS2 Python node that bridges the standard `/cmd_vel` topic to the UGV02 MFD board's
+JSON-over-serial protocol. Subscribes to `geometry_msgs/Twist`, applies skid-steer
 kinematics to compute differential wheel speeds, and writes JSON commands to `/dev/rover`.
+Implements gyrodometry — fusing the MFD's onboard gyroscope (`gz`) for heading with the
+encoder average `(odl + odr) / 2` for linear displacement — and publishes `nav_msgs/Odometry`
+to `/odom` with the corresponding `odom → base_link` tf2 transform.
 
 ```bash
 ros2 run rover_driver rover_driver_node
 ```
 
 See [`src/ROS2/rover-driver/README.md`](src/ROS2/rover-driver/README.md) for full setup instructions.
+
+### robot_description
+A ROS2 package containing the rover's URDF and SLAM Toolbox configuration. The URDF
+defines the `base_link → laser` transform at 0.1685m height, derived from physical
+measurement. Includes the SLAM Toolbox launch file and `slam_toolbox.yaml` configuration.
+
+```bash
+ros2 launch robot_description slam.launch.py
+```
 
 ### rplidar_ros
 Slamtec's official ROS2 LiDAR driver, built from source to include RPLidar C1 support.
@@ -140,7 +169,7 @@ Building autonomous systems and learning production ROS2 development.
 
 ## Acknowledgments
 
-- Waveshare for the Wave Rover platform
+- Waveshare for the UGV02 platform and MFD board
 - NVIDIA for Jetson developer tools and documentation
 - Slamtec for the RPLidar SDK and ROS2 driver
 - The ROS2 and Nav2 open source communities
