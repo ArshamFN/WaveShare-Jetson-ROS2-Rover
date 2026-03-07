@@ -19,6 +19,7 @@ dedicated file in this folder with full details.
 | 006 | 2026-03-01 | Hardware Assessment & Platform Migration: Wave Rover → UGV02 | ✅ Complete |
 | 007 | 2026-03-02 | Linear Scale Calibration & TRACK_WIDTH Investigation | ✅ Complete |
 | 008 | 2026-03-03 | Automated Calibration Script & Battery Sag Discovery | ✅ Complete |
+| 009 | 2026-03-04 | Hybrid Odometry (Gyro Heading + Encoder Linear) & First Proper SLAM Map | ✅ Complete |
 
 ---
 
@@ -36,7 +37,7 @@ for ~$760 CAD total. No issues encountered.
 
 ---
 
-## Session 001 — 2026-02-21: Jetson Setup, Remote Access & UART Debugging
+## Session 001 — 2026-02-20: Jetson Setup, Remote Access & UART Debugging
 **Goal:** Set up the Jetson Orin Nano Super, establish remote access,
 and achieve working UART communication with the Wave Rover.
 
@@ -71,7 +72,7 @@ communication fully working — rover moves on command from the Jetson. ✅
 
 ---
 
-## Session 003 — 2026-02-22: CAD Design — GRD Cover & RPLidar Mount
+## Session 003 — 2026-02-23: CAD Design — GRD Cover & RPLidar Mount
 
 **Goal:** Finalize CAD designs for the custom GRD electronics cover and
 RPLidar C1 mounting case while waiting for antenna and standoff spacers to arrive.
@@ -89,7 +90,7 @@ to the rover. No physical assembly this session — parts still in transit.
 
 ---
 
-## Session 004 — 2026-02-25: Power Debugging, LiDAR Integration & ROS2 Motor Control
+## Session 004 — 2026-02-24: Power Debugging, LiDAR Integration & ROS2 Motor Control
 **Goal:** Resolve power system fault from first full assembly boot, integrate the
 RPLidar C1 into ROS2, and achieve complete rover motor control through the `/cmd_vel`
 topic.
@@ -129,7 +130,7 @@ occupancy grid map of the room visible. ✅
 
 ---
 
-## Session 006 — 2026-03-01: Hardware Assessment & Platform Migration: Wave Rover → UGV02
+## Session 006 — 2026-02-28: Hardware Assessment & Platform Migration: Wave Rover → UGV02
 
 **Goal:** Begin implementing encoder-based wheel odometry to replace the static
 `odom → base_link` transform in `slam.launch.py`.
@@ -196,5 +197,26 @@ heading combined with encoder-based linear displacement (gyrodometry) for Sessio
 eliminating `TRACK_WIDTH` as a calibration parameter entirely.
 
 **→ [Full session log](2026-03-03-session-008-calibration-script-encoder-swap.md)**
+
+---
+
+## Session 009 — 2026-03-04: Hybrid Odometry & First Proper SLAM Map
+
+**Goal:** Implement a hybrid odometry node sourcing heading from the gyroscope and
+linear displacement from the encoder average, removing `TRACK_WIDTH` from the
+architecture entirely. Produce a reliable teleop SLAM map with the new node.
+
+**Summary:** Wrote and deployed a new `rover_driver_node.py` implementing gyrodometry:
+`gz` gyroscope integration for heading, encoder average `(odl + odr) / 2` for linear
+displacement. `GZ_SCALE = 0.001058 rad/(count·s)` was obtained via the Phase 2 hand
+rotation procedure from `calibrate_track_width.py` and validated by a 90° motor turn
+measuring 90.04°. The result was the first geometrically correct SLAM map — clean
+rectangular walls, sharp corners, no doubling. A stale `~/install/` directory from an
+earlier session was also discovered to be shadowing `~/ros2_ws/install/`, causing the node
+to run the wrong file after every rebuild; the directory was permanently deleted.
+
+![Session 009 — First Proper SLAM Map](../../images/testing/session-009/session-009-First-Proper-SLAM-Map.jpg)
+
+**→ [Full session log](2026-03-04-session-009-hybrid-odometry-first-proper-slam-map.md)**
 
 ---
