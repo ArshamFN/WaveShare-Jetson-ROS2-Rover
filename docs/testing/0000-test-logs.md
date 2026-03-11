@@ -20,6 +20,7 @@ dedicated file in this folder with full details.
 | 007 | 2026-03-02 | Linear Scale Calibration & TRACK_WIDTH Investigation | ✅ Complete |
 | 008 | 2026-03-03 | Automated Calibration Script & Battery Sag Discovery | ✅ Complete |
 | 009 | 2026-03-04 | Hybrid Odometry (Gyro Heading + Encoder Linear) & First Proper SLAM Map | ✅ Complete |
+| 010 | 2026-03-09 | Heading Hold, Velocity Ramp, ZUPT & PD Controller | ✅ Complete |
 
 ---
 
@@ -218,5 +219,34 @@ to run the wrong file after every rebuild; the directory was permanently deleted
 ![Session 009 — First Proper SLAM Map](../../images/testing/session-009/session-009-First-Proper-SLAM-Map.jpg)
 
 **→ [Full session log](2026-03-04-session-009-hybrid-odometry-first-proper-slam-map.md)**
+
+---
+
+## Session 010 — 2026-03-09: Heading Hold, Velocity Ramp, ZUPT & PD Controller
+
+**Goal:** Implement a software acceleration limiter to eliminate Jetson shutdown from
+hard-acceleration current spikes, tune SLAM Toolbox parameters to reduce wall smearing,
+and solve heading drift on soft surfaces that was degrading map quality over long sessions.
+
+**Summary:** Confirmed the odometry projection math was already geometrically correct —
+the drift problem was physical, not mathematical. Implemented a forward-only heading hold
+PD controller (KP=1.6, KD=0.3) with gyro settle check, spike clamp, deadband, and a hard
+output cap that keeps the rover tracking straight during SLAM runs. A software velocity
+ramp (0.8 m/s² linear, 2.0 rad/s² angular) eliminated the Jetson shutdown caused by
+hard-acceleration current spikes and improved motion smoothness as a side effect.
+Zero Velocity Update (ZUPT) was implemented to continuously correct gyro bias drift at
+every stationary pause throughout a session, addressing cumulative heading error that was
+making longer sessions worse rather than better. Startup bias calibration was upgraded
+from fixed-duration averaging to convergence-based standard deviation gating — switching
+from peak-to-peak to std dev fixed a false-convergence-failure caused by single spike
+outliers in an electrically noisy environment. SLAM Toolbox parameters were tuned for
+full 10 Hz scan ingestion, larger loop closure search radius (15 m), and more tolerant
+scan matching. Four mapping attempts across the session showed measurable improvement at
+each step, with the final attempt producing the cleanest map to date — three tight walls
+over two full perimeter laps.
+
+![Session 010 — Best map result](../../images/testing/session-010/session-010-map-attempt-4.png)
+
+**→ [Full session log](2026-03-09-session-010-heading-hold-velocity-ramp-zupt-slam-tuning.md)**
 
 ---
