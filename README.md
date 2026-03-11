@@ -71,12 +71,14 @@ with sufficient runtime for a full mapping run.
 
 ## Current Status
 
-**Last Updated:** March 7, 2026
+**Last Updated:** March 9, 2026
 
 The rover is fully assembled and operational with a complete ROS2 navigation stack. Gyrodometry
 is live — the `rover_driver` node fuses the MFD's onboard gyroscope for heading with
 encoder-averaged linear displacement, eliminating the need for a track width constant entirely.
-The first proper SLAM map has been produced and confirmed using this odometry architecture.
+A heading hold PD controller keeps the rover tracking straight during SLAM runs, a software
+velocity ramp prevents hard-acceleration current spikes, and Zero Velocity Update (ZUPT)
+corrects gyro bias drift continuously throughout mapping sessions.
 
 ### Completed Milestones
 
@@ -97,6 +99,11 @@ The first proper SLAM map has been produced and confirmed using this odometry ar
 - ✅ Encoder odometry calibrated: `TRACK_WIDTH = 0.0456 m` (gyroscope-referenced, 3-phase calibration script)
 - ✅ Gyrodometry implemented: gyroscope (`gz`) for heading, encoder average `(odl + odr) / 2` for linear displacement — `TRACK_WIDTH` eliminated from odometry entirely
 - ✅ First proper SLAM map produced with gyrodometry active
+- ✅ Software velocity ramp implemented — linear (0.8 m/s²) and angular (2.0 rad/s²) axes
+- ✅ Forward-only heading hold PD controller implemented — gyro-based straight-line correction with settle gate, deadband, spike clamp, and output cap
+- ✅ Zero Velocity Update (ZUPT) implemented — continuous gyro bias correction during stationary pauses
+- ✅ SLAM Toolbox parameters tuned — full 10 Hz scan ingestion, extended loop closure search radius (15 m)
+- ✅ Best map quality to date — three clean walls over two full perimeter laps
 
 ### Known Hardware Notes
 
@@ -107,9 +114,9 @@ The first proper SLAM map has been produced and confirmed using this odometry ar
   passive and unencoded. Odometry is computed from front wheel data only.
 - **Battery sag under hard acceleration:** Commanding all four motors from a standstill at
   full speed causes a simultaneous peak current draw that can sag the battery below the
-  Jetson's minimum operating voltage, triggering a protective shutdown. Gradual acceleration
-  from rest keeps current draw within safe limits. A software acceleration limiter in
-  `rover_driver` is the planned permanent mitigation.
+  Jetson's minimum operating voltage, triggering a protective shutdown. A software velocity
+  ramp in `rover_driver` limits acceleration to 0.8 m/s² and eliminates the shutdown under
+  normal operation.
 - **ttyTHS1 UART bug:** The Jetson Orin Nano has a known data corruption bug on `/dev/ttyTHS1`
   requiring RTS/CTS hardware flow control. See Session 002 log for the full fix.
   Rover communication uses the MFD's dedicated USB serial port (`/dev/rover`) for reliability.
@@ -125,7 +132,10 @@ JSON-over-serial protocol. Subscribes to `geometry_msgs/Twist`, applies skid-ste
 kinematics to compute differential wheel speeds, and writes JSON commands to `/dev/rover`.
 Implements gyrodometry — fusing the MFD's onboard gyroscope (`gz`) for heading with the
 encoder average `(odl + odr) / 2` for linear displacement — and publishes `nav_msgs/Odometry`
-to `/odom` with the corresponding `odom → base_link` tf2 transform.
+to `/odom` with the corresponding `odom → base_link` tf2 transform. Also implements a
+software velocity ramp on both axes to prevent hard-acceleration current spikes, a
+forward-only heading hold PD controller for straight-line drift correction, and Zero
+Velocity Update (ZUPT) for continuous gyro bias correction during stationary pauses.
 
 ```bash
 ros2 run rover_driver rover_driver_node
@@ -137,6 +147,8 @@ See [`src/ROS2/rover-driver/README.md`](src/ROS2/rover-driver/README.md) for ful
 A ROS2 package containing the rover's URDF and SLAM Toolbox configuration. The URDF
 defines the `base_link → laser` transform at 0.1685m height, derived from physical
 measurement. Includes the SLAM Toolbox launch file and `slam_toolbox.yaml` configuration.
+SLAM Toolbox parameters have been tuned for full 10 Hz scan ingestion, reduced distance
+penalty, and a 15 m loop closure search radius suited to indoor room mapping.
 
 ```bash
 ros2 launch robot_description slam.launch.py
