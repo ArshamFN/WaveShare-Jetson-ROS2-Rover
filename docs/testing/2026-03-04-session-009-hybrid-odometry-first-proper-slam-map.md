@@ -105,7 +105,7 @@ has produced across all sessions.
 
 **First proper SLAM map — Session 009:**
 
-![Session 009 — First Proper SLAM Map](../images/testing/session-009/session-009-First-Proper-SLAM-Map.jpg)
+![Session 009 — First Proper SLAM Map](../../images/testing/session-009/session-009-First-Proper-SLAM-Map.jpg)
 
 Clean rectangular wall definition, sharp corners, and a clear open interior. The gap at
 the top-right reflects an area I did not drive close enough for the LiDAR to cover — that is
