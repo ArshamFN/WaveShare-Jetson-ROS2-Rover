@@ -195,7 +195,7 @@ smoother motion reduces the angular jitter in consecutive scans.
 
 **Attempt 1 — Fast driving, no full loop (106s)**
 
-![Map attempt 1](../images/testing/session-010/session-010-map-attempt-1.png)
+![Map attempt 1](../../images/testing/session-010/session-010-map-attempt-1.png)
 
 Significant smearing throughout. No loop closure. Too fast for SLAM to correlate scans
 reliably.
@@ -204,7 +204,7 @@ reliably.
 
 **Attempt 2 — Slow driving, full loop, no ZUPT (216s)**
 
-![Map attempt 2](../images/testing/session-010/session-010-map-attempt-2.png)
+![Map attempt 2](../../images/testing/session-010/session-010-map-attempt-2.png)
 
 Worse than attempt 1 despite slower driving. More elapsed time meant more accumulated
 gyro drift with no correction mechanism. By the time the rover returned to origin, the
@@ -215,7 +215,7 @@ Loop closure did not fire.
 
 **Attempt 3 — With ZUPT, slow driving, two laps, pausing before turns (362s)**
 
-![Map attempt 3](../images/testing/session-010/session-010-map-attempt-3.png)
+![Map attempt 3](../../images/testing/session-010/session-010-map-attempt-3.png)
 
 Noticeably cleaner upper walls. ZUPT was correcting drift at every pause. The room shape
 became recognisable for the first time. The bottom-right section remained messy — this is
@@ -225,7 +225,7 @@ a bed corner and shelf the rover could not fully navigate around.
 
 **Attempt 4 — PD controller and convergence-based calibration, two laps (352s)**
 
-![Map attempt 4](../images/testing/session-010/session-010-map-attempt-4.png)
+![Map attempt 4](../../images/testing/session-010/session-010-map-attempt-4.png)
 
 Best result to date. Three walls are clean and tight. The map no longer drifts
 rotationally during the session. The bottom-right furniture corner remains the only
