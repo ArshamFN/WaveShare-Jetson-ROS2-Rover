@@ -204,23 +204,6 @@ Key differences relevant to this project:
 
 ---
 
-## Documentation & Video
-
-I recorded a video for this session covering:
-- The technical reasoning behind the platform switch
-- The three options evaluated and why options A and B were rejected
-- Time-lapse footage of the hardware disassembly and reassembly
-
-![Session 006 video](../../images/testing/session-006-migration/session-006.mp4)
-
-![UGV02 fully assembled — front](../../images/testing/session-006-migration/session-006-UGV02-front.jpg)
-
-![UGV02 fully assembled — rear](../../images/testing/session-006-migration/session-006-UGV02-rear.jpg)
-*UGV02 with Jetson Orin Nano Super and RPLidar C1 fully migrated and
-mounted. The 3D-printed LiDAR case and top cover were transferred without modification.*
-
----
-
 ## Lessons Learned
 
 **Verify hardware capabilities against software requirements before committing to a platform.**
