@@ -17,6 +17,8 @@ A 4WD autonomous ground robot built on the Waveshare UGV02 platform with NVIDIA 
 - Document real engineering problem-solving
 - Build an AI-ready platform for future computer vision integration
 
+![UGV02 fully assembled with migrated hardware](images/testing/session-006-migration/session-006-UGV02-front.jpg)
+
 ## Hardware Platform
 
 ### Core Components
