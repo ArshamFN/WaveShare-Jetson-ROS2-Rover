@@ -21,6 +21,7 @@ dedicated file in this folder with full details.
 | 008 | 2026-03-03 | Automated Calibration Script & Battery Sag Discovery | ✅ Complete |
 | 009 | 2026-03-04 | Hybrid Odometry (Gyro Heading + Encoder Linear) & First Proper SLAM Map | ✅ Complete |
 | 010 | 2026-03-09 | Heading Hold, Velocity Ramp, ZUPT & PD Controller | ✅ Complete |
+| 011 | 2026-03-13 | Universal Heading Hold Tune for Mixed Surfaces | ✅ Complete |
 
 ---
 
@@ -248,5 +249,30 @@ over two full perimeter laps.
 ![Session 010 — Best map result](../../images/testing/session-010/session-010-map-attempt-4.png)
 
 **→ [Full session log](2026-03-09-session-010-heading-hold-velocity-ramp-zupt-slam-tuning.md)**
+
+---
+
+## Session 011 — 2026-03-13: Universal Heading Hold Tune for Mixed Surfaces
+ 
+**Goal:** Validate the Session 010 heading hold PD controller on carpet and find a
+single set of constants that works acceptably on both hard floors and soft surfaces,
+without manual re-tuning between environments.
+ 
+**Summary:** Testing the Session 010 heading hold constants on carpet exposed two
+compounding failure modes: `HEADING_KP` had drifted to 2.2 (above the settled Session
+010 value of 1.6, cause unknown), and `HEADING_DEADBAND` at 0.017 rad (~1°) was
+narrower than the carpet vibration noise floor — causing the controller to generate
+continuous phantom corrections on an already-correct heading. The goal was not a
+carpet-specific tune but a universal baseline that tolerates soft surfaces without
+breaking hard-floor performance. Two iterations were run with one battery charge and
+no charger available: a first attempt at KD=0.4/DEADBAND=0.035 failed to fully
+suppress surface jitter; a second at KD=0.5/DEADBAND=0.045 produced observably
+improved straight-line tracking on carpet. Final universal constants: `HEADING_KP=1.4`,
+`HEADING_KD=0.5`, `HEADING_DEADBAND=0.045 rad`, `GZ_MAX_RATE=2.0`. No SLAM map was
+captured — battery constraints meant testing was rapid and observational. Result is
+approximately 90% of the way toward the goal; a full validation mapping run across
+both surfaces remains the next step.
+ 
+**→ [Full session log](2026-03-13-session-011-universal-heading-hold-tune.md)**
 
 ---
