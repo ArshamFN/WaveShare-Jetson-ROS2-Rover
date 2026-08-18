@@ -68,19 +68,23 @@ with sufficient runtime for a full mapping run.
 - **ROS Distribution:** ROS2 Humble Hawksbill
 - **Navigation Framework:** Nav2 (Navigation2 stack)
 - **SLAM Algorithm:** slam_toolbox (synchronous mapping mode, CeresSolver)
+- **Odometry:** rf2o_laser_odometry (Range Flow-based 2D Odometry from laser scans)
 - **Visualization:** RViz2
 - **Development Languages:** Python 3.10, C++17
 
 ## Current Status
 
-**Last Updated:** March 9, 2026
+**Last Updated:** August 18, 2026
 
-The rover is fully assembled and operational with a complete ROS2 navigation stack. Gyrodometry
-is live — the `rover_driver` node fuses the MFD's onboard gyroscope for heading with
-encoder-averaged linear displacement, eliminating the need for a track width constant entirely.
-A heading hold PD controller keeps the rover tracking straight during SLAM runs, a software
-velocity ramp prevents hard-acceleration current spikes, and Zero Velocity Update (ZUPT)
-corrects gyro bias drift continuously throughout mapping sessions.
+The rover is fully assembled and operational with a complete ROS2 navigation stack.
+Pose estimation is derived from the LiDAR: `rf2o_laser_odometry` computes planar
+odometry from consecutive laser scans and owns the `odom → base_link` transform. This
+replaced gyrodometry as the primary odometry source, because gyroscope calibration is
+conditional on both driving surface and operating temperature, while the LiDAR is
+unaffected by either. The `rover_driver` node retains motor control, the heading hold PD
+controller, the velocity ramp, and ZUPT, and continues publishing wheel odometry to
+`/odom_wheel` and raw gyroscope data to `/imu/gz` for comparison and future sensor
+fusion.
 
 ### Completed Milestones
 
@@ -105,7 +109,9 @@ corrects gyro bias drift continuously throughout mapping sessions.
 - ✅ Forward-only heading hold PD controller implemented — gyro-based straight-line correction with settle gate, deadband, spike clamp, and output cap
 - ✅ Zero Velocity Update (ZUPT) implemented — continuous gyro bias correction during stationary pauses
 - ✅ SLAM Toolbox parameters tuned — full 10 Hz scan ingestion, extended loop closure search radius (15 m)
-- ✅ Best map quality to date — three clean walls over two full perimeter laps
+- ✅ `rf2o_laser_odometry` built from source and integrated — LiDAR scan-matching odometry publishing `/odom` at 10 Hz
+- ✅ Odometry architecture migrated to LiDAR-primary — RF2O owns `odom → base_link`; wheel odometry retained on `/odom_wheel` for comparison
+- ✅ First geometrically accurate room map — single-cell walls with all room features correctly placed
 
 ### Known Hardware Notes
 
@@ -132,12 +138,12 @@ corrects gyro bias drift continuously throughout mapping sessions.
 A ROS2 Python node that bridges the standard `/cmd_vel` topic to the UGV02 MFD board's
 JSON-over-serial protocol. Subscribes to `geometry_msgs/Twist`, applies skid-steer
 kinematics to compute differential wheel speeds, and writes JSON commands to `/dev/rover`.
-Implements gyrodometry — fusing the MFD's onboard gyroscope (`gz`) for heading with the
-encoder average `(odl + odr) / 2` for linear displacement — and publishes `nav_msgs/Odometry`
-to `/odom` with the corresponding `odom → base_link` tf2 transform. Also implements a
-software velocity ramp on both axes to prevent hard-acceleration current spikes, a
-forward-only heading hold PD controller for straight-line drift correction, and Zero
-Velocity Update (ZUPT) for continuous gyro bias correction during stationary pauses.
+Publishes wheel-derived odometry to `/odom_wheel` and raw gyroscope data to `/imu/gz`.
+The node does not broadcast `odom → base_link` — that transform is owned by
+`rf2o_laser_odometry`. Also implements a software velocity ramp on both axes to prevent
+hard-acceleration current spikes, a forward-only heading hold PD controller for
+straight-line drift correction, and Zero Velocity Update (ZUPT) for continuous gyro bias
+correction during stationary pauses.
 
 ```bash
 ros2 run rover_driver rover_driver_node
@@ -154,6 +160,26 @@ penalty, and a 15 m loop closure search radius suited to indoor room mapping.
 
 ```bash
 ros2 launch robot_description slam.launch.py
+```
+
+### rf2o_laser_odometry
+Range Flow-based 2D Odometry — estimates planar motion directly from consecutive
+RPLidar scans and publishes `nav_msgs/Odometry` to `/odom` along with the
+`odom → base_link` transform. Built from the Adlink-ROS ROS2 fork.
+
+Note that `init_pose_from_topic` must be set empty. It defaults to
+`/base_pose_ground_truth`, a simulation-only topic; left at its default on real
+hardware, the node waits indefinitely for a pose that never arrives.
+
+```bash
+ros2 run rf2o_laser_odometry rf2o_laser_odometry_node --ros-args \
+  -p laser_scan_topic:=/scan \
+  -p odom_topic:=/odom \
+  -p base_frame_id:=base_link \
+  -p odom_frame_id:=odom \
+  -p 'init_pose_from_topic:=""' \
+  -p publish_tf:=true \
+  -p freq:=10.0
 ```
 
 ### rplidar_ros
