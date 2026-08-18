@@ -22,6 +22,7 @@ dedicated file in this folder with full details.
 | 009 | 2026-03-04 | Hybrid Odometry (Gyro Heading + Encoder Linear) & First Proper SLAM Map | ✅ Complete |
 | 010 | 2026-03-09 | Heading Hold, Velocity Ramp, ZUPT & PD Controller | ✅ Complete |
 | 011 | 2026-03-13 | Universal Heading Hold Tune for Mixed Surfaces | ✅ Complete |
+| 012 | 2026-08-18 | Lidar-Based Odometry with RF2O — First Genuinely Useful Map | ✅ Complete |
 
 ---
 
@@ -274,5 +275,43 @@ approximately 90% of the way toward the goal; a full validation mapping run acro
 both surfaces remains the next step.
  
 **→ [Full session log](2026-03-13-session-011-universal-heading-hold-tune.md)**
+
+---
+
+## Session 012 — 2026-08-18: Lidar-Based Odometry with RF2O
+
+**Goal:** Return to the project after several months away, establish where the system
+actually stands, and get past the map quality problem that has blocked Nav2 since
+Session 010.
+
+**Summary:** An initial mapping run with the Session 011 universal constants reproduced
+the same failure as before the break — a rounded, lopsided map of a rectilinear room.
+A direct check ruled out `GZ_SCALE` as the cause: two verified 90° turns reported
+-91.87° and -89.86°, totalling -181.74° against a target of -180°, under 1% error. The
+calibration was fine and the map was still wrong. Returning with fresh perspective led
+to a different conclusion than previous sessions had reached: gyro-based odometry is not
+a reliable foundation regardless of calibration quality, because the calibration itself
+is conditional — Session 011 already showed constants tuned on hard floors do not
+transfer to carpet, and gyroscope bias drifts with temperature, so a calibration valid
+at boot is not necessarily valid later in a session. The lidar is the only sensor on the
+rover unaffected by either surface or temperature, its main weakness being very large
+spaces that fall outside its range — not a realistic condition for this robot. The
+architecture was therefore changed to derive pose from the lidar using RF2O (Range
+Flow-based 2D Odometry), which estimates planar motion from consecutive laser scans.
+Two changes were required on the rover side: the driver's `odom → base_link` TF
+broadcast was disabled so RF2O owns the transform outright (a TF edge can only have one
+publisher), and the driver's wheel odometry topic was renamed to `/odom_wheel` to avoid
+collision. RF2O then hung indefinitely on `Waiting for laser_scans....` with no error —
+scans flowing at 10 Hz, subscription registered, QoS compatible, transforms resolving,
+and no exception even at debug log level. The cause was its `init_pose_from_topic`
+parameter defaulting to `/base_pose_ground_truth`, a simulation-only topic nothing on
+this robot publishes; setting it empty starts the node at origin and resolved the hang.
+The resulting mapping run produced the first genuinely useful map of the entire project:
+single-cell-thick walls, sharp corners, and the room's 45° chamfer, wall protrusion, and
+alcove all correctly placed. Saved as an 88 × 72 grid at 0.05 m/pixel.
+
+![Session 012 — First genuinely useful map, produced with RF2O lidar odometry](../../images/testing/session-012/session-012-First-Clean-Map.png)
+
+**→ [Full session log](2026-08-17-session-012-LIDAR-odometry-RF2O.md)**
 
 ---
