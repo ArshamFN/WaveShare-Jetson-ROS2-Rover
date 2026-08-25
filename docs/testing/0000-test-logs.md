@@ -23,6 +23,7 @@ dedicated file in this folder with full details.
 | 010 | 2026-03-09 | Heading Hold, Velocity Ramp, ZUPT & PD Controller | ✅ Complete |
 | 011 | 2026-03-13 | Universal Heading Hold Tune for Mixed Surfaces | ✅ Complete |
 | 012 | 2026-08-18 | Lidar-Based Odometry with RF2O — First Genuinely Useful Map | ✅ Complete |
+| 013 | 2026-08-21 | Nav2 Integration — First Autonomous Navigation | ✅ Complete |
 
 ---
 
@@ -313,5 +314,48 @@ alcove all correctly placed. Saved as an 88 × 72 grid at 0.05 m/pixel.
 ![Session 012 — First genuinely useful map, produced with RF2O lidar odometry](../../images/testing/session-012/session-012-First-Clean-Map.png)
 
 **→ [Full session log](2026-08-17-session-012-LIDAR-odometry-RF2O.md)**
+
+---
+
+## Session 013 — 2026-08-21: Nav2 Integration & First Autonomous Navigation
+
+**Goal:** Bring Nav2 up on top of the RF2O + slam_toolbox stack from Session 012 and
+reach a working `NavigateToPose` demo — the milestone the project has been aimed at
+since Session 001.
+
+**Summary:** Most of the session went to auditing numbers the stack had been running on
+unverified. A sluggish-feeling map traced not to compute load but to `map_update_interval`
+being absent from `slam_toolbox_params.yaml` entirely, leaving slam_toolbox on its
+10-second default; a full `ros2 param dump` comparison then found `distance_penalty` and
+`angle_penalty` were not real parameter names — the correct keys are
+`distance_variance_penalty` and `angle_variance_penalty`, so the Session 010 tuning of
+those values never took effect. ROS2 accepts unknown YAML keys silently, which is how
+five separate config values in this project turned out to be doing nothing. Writing a
+LiDAR wall-ranging script to measure motor constants then exposed a deeper problem: with
+a wall tape-measured at 3.00 m directly ahead, the only coherent 3 m surface in `/scan`
+was a 38° arc spanning ±180°. The RPLidar C1 is mounted with its housing arrow pointing
+forward as documented, but its zero-bearing beam emits at the opposite end of the sweep —
+something confirmed by a second flat surface 0.113 m behind the rover whose slant-range
+profile matched a `1/cos(θ)` curve to within 5 mm out to 55°. `rover.urdf` had declared
+`rpy="0 0 0"` on the `base_to_laser` joint since the project's first URDF; SLAM and RF2O
+were never affected because every consumer was consistently wrong together, but Nav2
+would have driven the rover backward along its planned path. Corrected to
+`rpy="0 0 3.14159265"`. The motor mix was found to have no unit conversion at all —
+`linear` in m/s written straight through as a normalised duty value, with a hardcoded
+`0.5` angular coefficient implying a 1.0 m track width. Both constants were measured:
+`MAX_WHEEL_SPEED = 0.956 m/s` by LiDAR wall ranging, and `TRACK_WIDTH = 0.174 m` by
+caliper, replacing the 0.08 m slip-fitted value from `calibrate_track_width.py` — correct
+for the inverse heading-from-encoders path it was written for, wrong by 2.2× for the
+forward motor-mix path. Measured acceleration (0.648 m/s²) and deceleration (−0.699 m/s²)
+both came in below the commanded 0.8 ramp rate, so Nav2's limits use hardware values
+rather than software ones. Nav2 was configured with Regulated Pure Pursuit against a
+live slam_toolbox map, and drove autonomously to a fixed goal pose from four different
+starting positions, routing through narrow gaps without clipping — direct evidence the
+measured footprint and inflation settings are correct. A fifth run launched from the
+doorway into unmapped space aborted: with slam_toolbox launched once and no relocalization
+in RF2O, the rover had no prior geometry to localize against, which is the known
+limitation of this architecture and what AMCL exists to solve.
+
+**→ [Full session log](2026-08-21-session-013-Nav2-Integration-and-First-Autonomous-Navigation.md)**
 
 ---
