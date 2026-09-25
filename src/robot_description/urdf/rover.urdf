@@ -1,7 +1,21 @@
 <?xml version="1.0"?>
 <robot name="wave_rover">
 
-  <link name="base_link"/>
+  <!--
+    Waveshare UGV02 chassis. All dimensions measured in Session 013.
+      chassis width   0.227 m
+      chassis length  0.250 m
+      track width     0.174 m   (front wheel contact patch to contact patch)
+      lidar height    0.180 m   from floor
+  -->
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.250 0.227 0.100"/>
+      </geometry>
+    </visual>
+  </link>
 
   <link name="laser">
     <visual>
@@ -11,10 +25,38 @@
     </visual>
   </link>
 
+  <!--
+    Session 013: yaw corrected from 0 to pi.
+    The RPLidar C1 is mounted with its 0-bearing beam pointing toward the
+    rover's REAR. Confirmed empirically: with a wall 3.00 m ahead and a
+    second wall 0.113 m behind, /scan reported the 3 m surface as a
+    coherent 38 deg arc spanning +/-180 deg, and the 0.113 m surface
+    across the forward arc with a textbook 1/cos(theta) slant-range
+    profile (agreement within 5 mm out to 55 deg).
+    Previously rpy="0 0 0", which told the TF tree the laser faced
+    forward. SLAM and RF2O were unaffected because every consumer was
+    consistently wrong together, but Nav2 would have driven the rover
+    backward along its planned path.
+
+    FRAME CONVENTION (resolved Session 013): base_link sits at the
+    chassis underside, the ground-clearance plane, 11.5 mm above the
+    floor. The lidar measures 180 mm from the floor, so the joint offset
+    is 180 - 11.5 = 168.5 mm. This recovers the provenance of the 0.1685
+    value, which predates this session and had no recorded datum.
+
+    Physical reference heights, for future measurements:
+      chassis underside (= base_link)    11.5 mm from floor
+      chassis mid-height                 45.0 mm from floor
+      full-stack mid-height (Jetson)     90.0 mm from floor
+      lidar plane                       180.0 mm from floor
+
+    Lidar, IMU and Jetson are all centred over the chassis, so x and y
+    offsets are zero by construction (confirmed Session 013).
+  -->
   <joint name="base_to_laser" type="fixed">
     <parent link="base_link"/>
     <child link="laser"/>
-    <origin xyz="0.0 0.0 0.1685" rpy="0 0 0"/>
+    <origin xyz="0.0 0.0 0.1685" rpy="0 0 3.14159265"/>
   </joint>
 
 </robot>

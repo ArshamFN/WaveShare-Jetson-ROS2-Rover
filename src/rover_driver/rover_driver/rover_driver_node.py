@@ -59,6 +59,29 @@ ZUPT_ALPHA     Exponential moving average factor for the bias update.
                fraction toward the current gz_raw reading.  0.05 is
                conservative — effective over a multi-minute session.
 
+USE_HEADING_HOLD
+               Master switch for the heading hold controller.  Disabled in
+               Session 013: Nav2's controller server runs its own closed-loop
+               heading control, and two controllers driving the same actuator
+               fight each other.  Set True only for manual teleop driving.
+
+CMD_TIMEOUT    Seconds without an incoming cmd_vel before the motors are
+               zeroed.  Prevents the rover running indefinitely on the last
+               received command if the commanding node crashes or the network
+               drops.  The velocity ramp still applies, so a watchdog trip
+               decelerates rather than dead-stopping.
+
+TRACK_WIDTH    Distance between the left and right wheel contact patches (m).
+               Used only to convert a commanded angular velocity into a wheel
+               speed differential.  Odometry does not use it — heading comes
+               from the gyro (Session 011).
+
+MAX_WHEEL_SPEED
+               Wheel-tangential speed (m/s) produced at full motor duty.
+               Converts SI velocity commands into the MFD's normalised +/-1.0
+               duty values.  UNCALIBRATED — see measurement note at the
+               differential mix.
+
 BIAS_NOISE_THRESHOLD
                Maximum acceptable standard deviation (raw gyro counts) of the
                bias calibration window.  Uses std dev rather than peak-to-peak
@@ -137,6 +160,35 @@ ZUPT_ODO_THRESHOLD = 0.5    # raw encoder units per tick (~0.5 mm)
 ZUPT_SETTLE_TICKS  = 20     # ticks (~1 second at 20 Hz)
 ZUPT_ALPHA         = 0.05   # EMA factor — slow, stable bias nudge
 
+# Heading hold master switch (Session 013).
+# Disabled for Nav2: the controller server runs its own closed-loop heading
+# control, and two controllers driving the same actuator fight each other.
+# Set True only for manual teleop driving.
+USE_HEADING_HOLD = False
+
+# Seconds without a cmd_vel before motors are zeroed.
+CMD_TIMEOUT = 0.5
+
+# ── Command unit conversion (Session 013) ───────────────────────────────────
+# Nav2 issues cmd_vel in SI units (m/s, rad/s). The MFD expects normalised
+# +/-1.0 motor duty values. These two constants bridge that gap.
+
+# Track width: distance between left and right wheel contact patches.
+# 0.08 m is the value carried in calibrate_track_width.py. NOT re-measured
+# since the UGV02 migration — verify with calipers.
+TRACK_WIDTH = 0.174        # m — measured S013, front wheel contact patch to contact patch (physical geometry, not the slip-fitted 0.08 from calibrate_track_width.py)
+
+# Wheel-tangential speed at full motor duty. UNCALIBRATED PLACEHOLDER.
+# Measure before trusting Nav2 path tracking:
+#   1. ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 1.0}}"
+#   2. ros2 topic echo /odom --field pose.pose.position.x
+#   3. Run ~3 s on a clear straight. Distance / time = MAX_WHEEL_SPEED.
+# Until measured, commanded velocities will not match actual velocities and
+# Nav2 controller tuning is meaningless.
+MAX_WHEEL_SPEED = 0.956     # m/s at full duty — measured S013 via LiDAR wall ranging
+MIN_WHEEL_SPEED = 0.10    # m/s. Firmware cannot regulate below ~0.08 m/s (20 PPR encoders); measured on 3 surfaces, Session 014
+WHEEL_ZERO_EPS  = 0.005   # m/s. Wheel targets below this are sent as exactly zero
+
 # ── Serial device ────────────────────────────────────────────────────────────
 ROVER_PORT      = '/dev/rover'
 BAUD_RATE       = 115200
@@ -163,6 +215,32 @@ TWIST_COV = [
 # ─────────────────────────────────────────────────────────────────────────────
 
 
+def mix_to_wheel_speeds(linear, angular):
+    """Twist (m/s, rad/s) to (left, right) wheel speed targets in m/s for T:1.
+
+    The MFD firmware runs closed-loop wheel speed control in m/s (verified
+    Session 014), so targets are sent in m/s, not as normalised duty.
+    Below ~0.08 m/s the firmware cannot regulate wheel speed, so a nonzero
+    command whose faster wheel is under MIN_WHEEL_SPEED is scaled up as a
+    pair. Scaling both wheels by one factor keeps their ratio, and so the
+    commanded turn curvature. Non-finite input returns zero.
+    """
+    if not (math.isfinite(linear) and math.isfinite(angular)):
+        return 0.0, 0.0
+    v_left  = linear - angular * TRACK_WIDTH * 0.5
+    v_right = linear + angular * TRACK_WIDTH * 0.5
+    peak = max(abs(v_left), abs(v_right))
+    if peak < WHEEL_ZERO_EPS:
+        return 0.0, 0.0
+    if peak < MIN_WHEEL_SPEED:
+        scale = MIN_WHEEL_SPEED / peak
+        v_left  *= scale
+        v_right *= scale
+    left  = max(-MAX_WHEEL_SPEED, min(MAX_WHEEL_SPEED, v_left))
+    right = max(-MAX_WHEEL_SPEED, min(MAX_WHEEL_SPEED, v_right))
+    return left, right
+
+
 class RoverDriverNode(Node):
 
     def __init__(self):
@@ -174,6 +252,7 @@ class RoverDriverNode(Node):
         # standalone topic for comparing wheel-derived odometry against RF2O.
         self._odom_pub  = self.create_publisher(Odometry, '/odom_wheel', 10)
         self._gz_pub    = self.create_publisher(Float32,  '/imu/gz', 50)
+        self._batt_pub  = self.create_publisher(Float32,  '/battery_voltage', 10)
         self._cmd_sub   = self.create_subscription(
             Twist, '/cmd_vel', self._cmd_vel_cb, 10)
 
@@ -208,6 +287,12 @@ class RoverDriverNode(Node):
         # at a limited rate to prevent current spikes on hard acceleration.
         self._ramp_linear    = 0.0
         self._ramp_angular   = 0.0
+
+        # ── Watchdog state ───────────────────────────────────────────────────
+        # Last time a cmd_vel arrived. If commands stop (controller
+        # crash, network drop), motors are zeroed rather than running on the
+        # last command indefinitely.
+        self._last_cmd_time  = 0.0
 
         # ── ZUPT state ──────────────────────────────────────────────────────
         # Counts consecutive ticks where both encoders read near-zero.
@@ -263,6 +348,7 @@ class RoverDriverNode(Node):
     def _cmd_vel_cb(self, msg: Twist):
         self._cmd_linear  = msg.linear.x
         self._cmd_angular = msg.angular.z
+        self._last_cmd_time = time.time()
 
     # ── Main loop ────────────────────────────────────────────────────────────
 
@@ -273,6 +359,20 @@ class RoverDriverNode(Node):
 
         if data is None or data.get('T') != 1001:
             return
+
+        # ── Battery voltage: MFD reports volts x100 (1224 = 12.24 V) ─────────
+        v_raw = data.get('v')
+        if isinstance(v_raw, (int, float)) and not isinstance(v_raw, bool):
+            volts = v_raw / 100.0
+            batt_msg = Float32()
+            batt_msg.data = float(volts)
+            self._batt_pub.publish(batt_msg)
+            if volts <= 9.6:
+                self.get_logger().error(
+                    f'Battery CRITICAL: {volts:.2f} V', throttle_duration_sec=30.0)
+            elif volts <= 10.5:
+                self.get_logger().warn(
+                    f'Battery low: {volts:.2f} V', throttle_duration_sec=30.0)
 
         gz_raw = data.get('gz')
         odl    = data.get('odl')
@@ -404,7 +504,7 @@ class RoverDriverNode(Node):
 
         self._odom_pub.publish(odom_msg)
 
-        # ── odom → base_link TF DISABLED (Session 012: RF2O now owns this transform) ──
+        # 
         # tf_msg = TransformStamped()
         # tf_msg.header.stamp    = stamp
         # tf_msg.header.frame_id = 'odom'
@@ -421,6 +521,10 @@ class RoverDriverNode(Node):
         # ── Heading hold + motor output ──────────────────────────────────────
         # Odometry is fully updated above before we compute the motor command,
         # so self._theta reflects the current heading at this exact moment.
+        # Watchdog: zero the command if nothing has arrived recently.
+        if now - self._last_cmd_time > CMD_TIMEOUT:
+            self._cmd_linear  = 0.0
+            self._cmd_angular = 0.0
 
         linear  = self._cmd_linear
         angular = self._cmd_angular
@@ -441,7 +545,7 @@ class RoverDriverNode(Node):
         linear  = self._ramp_linear
         angular = self._ramp_angular
 
-        if angular == 0.0 and linear != 0.0:
+        if USE_HEADING_HOLD and angular == 0.0 and linear != 0.0:
             # Straight-line travel: engage heading hold
             if self._theta_hold is None:
                 # Wait for gyro to settle before locking — prevents fighting the
@@ -481,8 +585,10 @@ class RoverDriverNode(Node):
                 self.get_logger().debug('Heading hold released.')
             self._theta_hold = None
 
-        left  = max(-1.0, min(1.0, linear - angular * 0.5))
-        right = max(-1.0, min(1.0, linear + angular * 0.5))
+        # -- Differential mix -> wheel speed targets (m/s) -------------------
+        # T:1 is closed-loop wheel speed in m/s, not duty (verified Session 014).
+        # See mix_to_wheel_speeds() for the low-speed floor and clamping.
+        left, right = mix_to_wheel_speeds(linear, angular)
         cmd = json.dumps({'T': 1, 'L': round(left, 3), 'R': round(right, 3)}) + '\n'
         self._ser.write(cmd.encode())
 

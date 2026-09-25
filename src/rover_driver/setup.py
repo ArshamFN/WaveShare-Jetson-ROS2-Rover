@@ -13,14 +13,18 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Arsham Farahani',
+    maintainer='arshamfn',
     maintainer_email='arshamfn@todo.todo',
-    description='ROS2 driver node that bridges /cmd_vel to WaveShare Wave Rover JSON serial protocol',
-    license='MIT',
-    tests_require=['pytest'],
-    entry_points={
-        'console_scripts': [
-            'rover_driver_node = rover_driver.rover_driver_node:main',
+    description='TODO: Package description',
+    license='TODO: License declaration',
+    extras_require={
+        'test': [
+            'pytest',
         ],
+    },
+    entry_points={
+    	'console_scripts': [
+             'rover_driver_node = rover_driver.rover_driver_node:main',
+    	],
     },
 )

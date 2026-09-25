@@ -1,0 +1,25 @@
+rf2o_laser_odometry:
+  ros__parameters:
+
+    # --- Topics ---
+    laser_scan_topic: /scan
+    odom_topic: /odom          # RF2O owns /odom; wheel odom lives on /odom_wheel
+
+    # --- Frames ---
+    base_frame_id: base_link
+    odom_frame_id: odom
+
+    # --- TF ---
+    # RF2O broadcasts odom->base_link. rover_driver's broadcast is disabled
+    # (session 012) — only one node may own this transform.
+    publish_tf: true
+
+    # --- Rate ---
+    freq: 10.0                 # Hz. Matches RPLidar C1 scan rate; 100ms budget.
+
+    # --- Initialisation ---
+    # MUST be empty. Default is the sim-only /base_pose_ground_truth topic;
+    # if left at the default, RF2O blocks forever on "Waiting for laser_scans...."
+    # and prints no error.
+    init_pose_from_topic: ""
+
