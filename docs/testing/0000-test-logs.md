@@ -24,6 +24,7 @@ dedicated file in this folder with full details.
 | 011 | 2026-03-13 | Universal Heading Hold Tune for Mixed Surfaces | ✅ Complete |
 | 012 | 2026-08-18 | Switching to Lidar-Based Odometry | ✅ Complete |
 | 013 | 2026-08-21 | Nav2 Integration and First Autonomous Navigation | ✅ Complete |
+| 014 | 2026-09-24 | Stack Audit, RF2O Startup Race, and the Wheel-Speed Floor | ✅ Complete |
 
 ---
 
@@ -357,5 +358,40 @@ in RF2O, the rover had no prior geometry to localize against, which is the known
 limitation of this architecture and what AMCL exists to solve.
 
 **→ [Full session log](2026-08-21-session-013-Nav2-Integration-and-First-Autonomous-Navigation.md)**
+
+---
+
+## Session 014 — 2026-09-24: Stack Audit, RF2O Startup Race, and the Wheel-Speed Floor
+
+**Goal:** Make in-place rotation work under Nav2, the motion frontier exploration is
+built from, after Session 013 left the rover stalling whenever the planner asked it to
+turn on the spot.
+
+**Summary:** Before changing the rotation behaviour I audited the Jetson against the
+Session 013 record, and it did not hold up: the GitHub repository still held
+pre-Session 013 code and could not build from a fresh clone, the `/battery_voltage`
+publisher had never been deployed, and slam_toolbox was still running on the dead
+`distance_penalty` and `angle_penalty` keys. I removed the dead keys, since every good
+map had been built on the defaults, and rebuilt the battery publisher from the T:1001
+`v` field (volts × 100), with warnings at 10.5 V and 9.6 V. Testing that publisher
+exposed an RF2O startup race: the node looks up the `base_link → laser` transform once,
+on its first scan, and if `/tf_static` has not arrived yet it logs an error and falls
+back to identity for the rest of the run. Harmless until Session 013's 180° URDF fix, it
+now silently negated translation in `/odom`, and it hit 6 of 8 launches in one day. A
+one-line patch makes RF2O retry until the transform exists; a forced-race test with
+`robot_state_publisher` withheld proved it, and the fix lives on my fork, pinned in
+`rover.repos`. For rotation itself, a wheels-in-air test showed the Waveshare board
+already runs closed-loop wheel speed control in m/s, which exposed a 4.6% unit error in
+my motor mix, and an in-place rotation test on three surfaces showed the controller
+cannot regulate wheel speeds below about 0.08 m/s. Nav2's default 0.6 rad/s rotation
+asked each wheel for 0.052 m/s, which was the entire stall. The mix now sends m/s with a
+0.10 m/s floor applied to both wheels together, preserving turn curvature, and the rover
+rotates reliably under teleop and Nav2 on every surface tested. The same test measured
+skid-steer scrub at 0.43 on all three surfaces, an effective track of about 0.405 m,
+left for a separate experiment. Finally, `~/ros2_ws` became a git clone of the
+repository with third-party packages pinned in `rover.repos`, and a fresh clone now
+builds and runs the full stack.
+
+**→ [Full session log](2026-09-24-session-014-Stack-Audit-RF2O-Startup-Race-and-the-Wheel-Speed-Floor.md)**
 
 ---
