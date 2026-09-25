@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 """
-bringup.launch.py — full rover stack in one launch.
+bringup.launch.py: full rover stack in one launch.
 
 Starts, in order:
   1. robot_state_publisher   (URDF / TF tree: base_link -> laser)
   2. rover_driver_node       (motor control, heading hold, ZUPT, /imu/gz, /odom_wheel)
-  3. rplidar_ros             (/scan)
-  4. rf2o_laser_odometry     (/odom + odom->base_link TF)
-  5. slam_toolbox            (/map)
+  3. twist_mux               (/cmd_vel + /cmd_vel_joy -> /cmd_vel_mux)
+  4. teleop_twist_joy        (/joy -> /cmd_vel_joy)
+  5. rplidar_ros             (/scan)
+  6. rf2o_laser_odometry     (/odom + odom->base_link TF)
+  7. slam_toolbox            (/map)
+
+Velocity chain: twist_mux merges /cmd_vel (navigation, priority 10) and
+/cmd_vel_joy (pendant joystick, priority 100) into /cmd_vel_mux, the only
+velocity input of rover_driver_node. The Bool locks /pendant/teleop_mode (50)
+and /pendant/estop (255) gate the mux; /joy is published by the pendant.
 
 NOT included (keep as a separate terminal):
   - teleop_twist_keyboard    (needs keyboard focus)
@@ -38,6 +45,8 @@ def generate_launch_description():
 
     slam_params = os.path.join(pkg_share, 'config', 'slam_toolbox_params.yaml')
     rf2o_params = os.path.join(pkg_share, 'config', 'rf2o_params.yaml')
+    twist_mux_params = os.path.join(pkg_share, 'config', 'twist_mux.yaml')
+    teleop_joy_params = os.path.join(pkg_share, 'config', 'teleop_joy.yaml')
     urdf_file = os.path.join(pkg_share, 'urdf', 'rover.urdf')
 
     use_rviz = LaunchConfiguration('use_rviz')
@@ -62,16 +71,39 @@ def generate_launch_description():
         executable='rover_driver_node',
         name='rover_driver_node',
         output='screen',
+        remappings=[('/cmd_vel', '/cmd_vel_mux')],
     )
 
-    # ------------------------------------------------------------------ 3. LiDAR
+    # ----------------------------------------------------------- 3. velocity mux
+    # Sole publisher of /cmd_vel_mux. Inputs and locks are in twist_mux.yaml.
+    twist_mux = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        name='twist_mux',
+        output='screen',
+        parameters=[twist_mux_params],
+        remappings=[('cmd_vel_out', '/cmd_vel_mux')],
+    )
+
+    # -------------------------------------------------------- 4. joystick teleop
+    # Consumes /joy from the pendant; no joy_node is started here.
+    teleop_joy = Node(
+        package='teleop_twist_joy',
+        executable='teleop_node',
+        name='teleop_twist_joy_node',
+        output='screen',
+        parameters=[teleop_joy_params],
+        remappings=[('cmd_vel', '/cmd_vel_joy')],
+    )
+
+    # ------------------------------------------------------------------ 5. LiDAR
     rplidar = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(rplidar_share, 'launch', 'rplidar_c1_launch.py')
         )
     )
 
-    # ------------------------------------------------------- 4. LiDAR odometry
+    # ------------------------------------------------------- 6. LiDAR odometry
     # Delayed 3s: RF2O blocks on the first scan, so let the LiDAR spin up first.
     rf2o = TimerAction(
         period=3.0,
@@ -86,7 +118,7 @@ def generate_launch_description():
         ],
     )
 
-    # -------------------------------------------------------------- 5. SLAM
+    # -------------------------------------------------------------- 7. SLAM
     # Delayed 5s: needs a live odom->base_link from RF2O before its first scan.
     slam_toolbox = TimerAction(
         period=5.0,
@@ -118,6 +150,8 @@ def generate_launch_description():
         ),
         robot_state_publisher,
         rover_driver,
+        twist_mux,
+        teleop_joy,
         rplidar,
         rf2o,
         slam_toolbox,
