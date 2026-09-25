@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Rover Nav2
+Comment=Nav2 navigation (start Rover Bringup first)
+Exec=gnome-terminal -- /home/arshamfn/bin/nav2_rover.sh
+Icon=mark-location
+Terminal=false
+Categories=Development;
