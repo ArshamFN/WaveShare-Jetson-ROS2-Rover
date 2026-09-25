@@ -3,7 +3,7 @@ Description=Rover pendant control node
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -c 'source /opt/ros/humble/setup.bash && source %h/ros2_ws/install/setup.bash && exec ros2 run pendant_bridge control_node'
+ExecStart=/bin/bash -c 'source /opt/ros/humble/setup.bash && source %h/ros2_ws/install/setup.bash && exec ros2 run pendant_bridge control_node --ros-args -p allow_poweroff:=true'
 Environment=PYTHONUNBUFFERED=1
 KillSignal=SIGINT
 TimeoutStopSec=20
