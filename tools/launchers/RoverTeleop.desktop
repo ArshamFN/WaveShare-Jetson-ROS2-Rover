@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Rover Teleop
+Comment=Keyboard control (i/j/k/l, click window first for focus)
+Exec=gnome-terminal -- /home/arshamfn/bin/teleop_rover.sh
+Icon=input-keyboard
+Terminal=false
+Categories=Development;

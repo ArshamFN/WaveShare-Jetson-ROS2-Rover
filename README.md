@@ -149,7 +149,7 @@ correction during stationary pauses.
 ros2 run rover_driver rover_driver_node
 ```
 
-See [`src/ROS2/rover-driver/README.md`](src/ROS2/rover-driver/README.md) for full setup instructions.
+See [`src/ROS2/rover-driver/README.md`](src/rover_driver/README.md) for full setup instructions.
 
 ### robot_description
 A ROS2 package containing the rover's URDF and SLAM Toolbox configuration. The URDF
@@ -189,7 +189,7 @@ Slamtec's official ROS2 LiDAR driver, built from source to include RPLidar C1 su
 ros2 launch rplidar_ros rplidar_c1_launch.py
 ```
 
-See [`src/ROS2/rplidar-ros/README.md`](src/ROS2/rplidar-ros/README.md) for full setup instructions.
+See [`src/ROS2/rplidar-ros/README.md`](docs/software/rplidar-ros.md) for full setup instructions.
 
 ## Documentation
 

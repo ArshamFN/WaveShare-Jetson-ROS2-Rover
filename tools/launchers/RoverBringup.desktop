@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Rover Bringup
+Comment=Driver + LiDAR + RF2O + SLAM Toolbox + RViz
+Exec=gnome-terminal -- /home/arshamfn/bin/bringup_rover.sh
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;

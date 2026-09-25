@@ -169,7 +169,7 @@ both hard floors and carpet:
 | `ZUPT_ALPHA` | 0.05 | Bias correction rate while stationary |
 
 `GZ_SCALE` can be re-derived with the Phase 2 hand-rotation procedure in
-`src/scripts/calibrate_track_width.py` if the MFD board is ever replaced.
+`scripts/calibrate_track_width.py` if the MFD board is ever replaced.
 
 ## Hardware notes
 

@@ -1,0 +1,9 @@
+repositories:
+  rf2o_laser_odometry:
+    type: git
+    url: https://github.com/ArshamFN/rf2o_laser_odometry.git
+    version: 82a99d43391cba12183e91066401de84d74f316c
+  rplidar_ros:
+    type: git
+    url: https://github.com/Slamtec/rplidar_ros.git
+    version: 24cc9b6dea97e045bda1408eaa867ce730fd3fc3
