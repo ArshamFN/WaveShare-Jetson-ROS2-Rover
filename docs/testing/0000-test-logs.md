@@ -11,19 +11,19 @@ dedicated file in this folder with full details.
 | Session | Date | Title | Status |
 |---------|------|-------|--------|
 | 000 | 2026-02-16 | Project Kickoff & Parts Ordered | ✅ Complete |
-| 001 | 2026-02-21 | Jetson Setup, Remote Access & UART Debugging | ✅ Complete |
+| 001 | 2026-02-20 | Jetson Setup, Remote Access & UART Debugging | ✅ Complete |
 | 002 | 2026-02-22 | UART Debugging & Breakthrough | ✅ Complete |
-| 003 | 2026-02-22 | CAD Design — GRD Cover & RPLidar Mount | ✅ Complete |
-| 004 | 2026-02-25 | Power Debugging, LiDAR Integration & ROS2 Motor Control | ✅ Complete |
+| 003 | 2026-02-23 | CAD Design: GRD Cover & RPLidar Mount | ✅ Complete |
+| 004 | 2026-02-24 | Power Debugging, LiDAR Integration & ROS2 Motor Control | ✅ Complete |
 | 005 | 2026-02-27 | URDF, tf2, and First SLAM Map | ✅ Complete |
-| 006 | 2026-03-01 | Hardware Assessment & Platform Migration: Wave Rover → UGV02 | ✅ Complete |
-| 007 | 2026-03-02 | Linear Scale Calibration & TRACK_WIDTH Investigation | ✅ Complete |
+| 006 | 2026-02-28 | Hardware Assessment & Platform Migration: Wave Rover → UGV02 | ✅ Complete |
+| 007 | 2026-03-02 | First Teleoperated SLAM Run & Odometry Calibration | ✅ Complete |
 | 008 | 2026-03-03 | Automated Calibration Script & Battery Sag Discovery | ✅ Complete |
-| 009 | 2026-03-04 | Hybrid Odometry (Gyro Heading + Encoder Linear) & First Proper SLAM Map | ✅ Complete |
-| 010 | 2026-03-09 | Heading Hold, Velocity Ramp, ZUPT & PD Controller | ✅ Complete |
+| 009 | 2026-03-04 | Hybrid Odometry & First Proper SLAM Map | ✅ Complete |
+| 010 | 2026-03-09 | Heading Hold, Velocity Ramp, ZUPT, PD Controller, and SLAM Tuning | ✅ Complete |
 | 011 | 2026-03-13 | Universal Heading Hold Tune for Mixed Surfaces | ✅ Complete |
-| 012 | 2026-08-18 | Lidar-Based Odometry with RF2O — First Genuinely Useful Map | ✅ Complete |
-| 013 | 2026-08-21 | Nav2 Integration — First Autonomous Navigation | ✅ Complete |
+| 012 | 2026-08-18 | Switching to Lidar-Based Odometry | ✅ Complete |
+| 013 | 2026-08-21 | Nav2 Integration and First Autonomous Navigation | ✅ Complete |
 
 ---
 
@@ -76,7 +76,7 @@ communication fully working — rover moves on command from the Jetson. ✅
 
 ---
 
-## Session 003 — 2026-02-23: CAD Design — GRD Cover & RPLidar Mount
+## Session 003 — 2026-02-23: CAD Design: GRD Cover & RPLidar Mount
 
 **Goal:** Finalize CAD designs for the custom GRD electronics cover and
 RPLidar C1 mounting case while waiting for antenna and standoff spacers to arrive.
@@ -90,7 +90,7 @@ to the rover. No physical assembly this session — parts still in transit.
 ![Custom GRD cover v1 installed](../../images/testing/session-003/session-003-custom-grd-cover-v1-installed.jpg.JPG)
 ![Custom lidar mounting case 3D-printed](../../images/testing/session-003/session-003-lidar-mounting-case.jpg)
 
-**→ [Full session log](2026-02-22-session-003-cad-grd-cover-lidar-mount.md)**
+**→ [Full session log](2026-02-23-session-003-cad-grd-cover-lidar-mount.md)**
 
 ---
 
@@ -225,7 +225,7 @@ to run the wrong file after every rebuild; the directory was permanently deleted
 
 ---
 
-## Session 010 — 2026-03-09: Heading Hold, Velocity Ramp, ZUPT & PD Controller
+## Session 010 — 2026-03-09: Heading Hold, Velocity Ramp, ZUPT, PD Controller, and SLAM Tuning
 
 **Goal:** Implement a software acceleration limiter to eliminate Jetson shutdown from
 hard-acceleration current spikes, tune SLAM Toolbox parameters to reduce wall smearing,
@@ -279,7 +279,7 @@ both surfaces remains the next step.
 
 ---
 
-## Session 012 — 2026-08-18: Lidar-Based Odometry with RF2O
+## Session 012 — 2026-08-18: Switching to Lidar-Based Odometry
 
 **Goal:** Return to the project after several months away, establish where the system
 actually stands, and get past the map quality problem that has blocked Nav2 since
@@ -313,11 +313,11 @@ alcove all correctly placed. Saved as an 88 × 72 grid at 0.05 m/pixel.
 
 ![Session 012 — First genuinely useful map, produced with RF2O lidar odometry](../../images/testing/session-012/session-012-First-Clean-Map.png)
 
-**→ [Full session log](2026-08-17-session-012-LIDAR-odometry-RF2O.md)**
+**→ [Full session log](2026-08-18-session-012-LIDAR-odometry-RF2O.md)**
 
 ---
 
-## Session 013 — 2026-08-21: Nav2 Integration & First Autonomous Navigation
+## Session 013 — 2026-08-21: Nav2 Integration and First Autonomous Navigation
 
 **Goal:** Bring Nav2 up on top of the RF2O + slam_toolbox stack from Session 012 and
 reach a working `NavigateToPose` demo — the milestone the project has been aimed at
