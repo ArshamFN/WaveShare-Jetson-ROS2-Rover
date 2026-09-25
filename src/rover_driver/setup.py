@@ -13,10 +13,10 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='arshamfn',
-    maintainer_email='arshamfn@todo.todo',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer='Arsham Faghihnasiri',
+    maintainer_email='58406708+ArshamFN@users.noreply.github.com',
+    description='ROS2 driver that bridges /cmd_vel to the Waveshare UGV02 motor board over JSON serial and publishes wheel odometry, gyro rate, and battery voltage.',
+    license='MIT',
     extras_require={
         'test': [
             'pytest',

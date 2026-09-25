@@ -3,15 +3,16 @@
 <package format="3">
   <name>rover_driver</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="arshamfn@todo.todo">arshamfn</maintainer>
-  <license>TODO: License declaration</license>
+  <description>ROS2 driver that bridges /cmd_vel to the Waveshare UGV02 motor board over JSON serial and publishes wheel odometry, gyro rate, and battery voltage.</description>
+  <maintainer email="58406708+ArshamFN@users.noreply.github.com">Arsham Faghihnasiri</maintainer>
+  <license>MIT</license>
 
   <depend>rclpy</depend>
   <depend>geometry_msgs</depend>
-  <depend>nav-msgs</depend>
+  <depend>nav_msgs</depend>
   <depend>tf2_ros</depend>
   <depend>std_msgs</depend>
+  <exec_depend>python3-serial</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
