@@ -3,7 +3,7 @@ Description=Rover bringup stack without RViz
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -c 'source /opt/ros/humble/setup.bash && source %h/ros2_ws/install/setup.bash && exec ros2 launch robot_description bringup.launch.py use_rviz:=false'
+ExecStart=/bin/bash -c 'source /opt/ros/humble/setup.bash && source %h/ros2_ws/install/setup.bash && export ROS_LOCALHOST_ONLY=1 && exec ros2 launch robot_description bringup.launch.py use_rviz:=false'
 ExecStopPost=/usr/bin/python3 %h/ros2_ws/tools/systemd/rover_zero_motors.py
 Environment=PYTHONUNBUFFERED=1
 KillSignal=SIGINT

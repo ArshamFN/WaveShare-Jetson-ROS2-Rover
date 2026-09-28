@@ -1,6 +1,7 @@
 #!/bin/bash
 cd ~/ros2_ws
 source install/setup.bash
+export ROS_LOCALHOST_ONLY=1
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 echo ""
 echo "--- Teleop exited. Press Enter to close. ---"
