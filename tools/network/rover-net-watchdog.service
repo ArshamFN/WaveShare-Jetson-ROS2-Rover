@@ -1,0 +1,13 @@
+[Unit]
+Description=Rover network watchdog, home Wi-Fi or rover hotspot
+After=NetworkManager.service
+Wants=NetworkManager.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/rover-net-watchdog
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
