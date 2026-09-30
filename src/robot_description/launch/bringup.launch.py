@@ -4,7 +4,7 @@ bringup.launch.py: full rover stack in one launch.
 
 Starts, in order:
   1. robot_state_publisher   (URDF / TF tree: base_link -> laser)
-  2. rover_driver_node       (motor control, heading hold, ZUPT, /imu/gz, /odom_wheel)
+  2. rover_driver_node       (motor control, ZUPT, /imu/gz, /odom_wheel, /battery_voltage)
   3. twist_mux               (/cmd_vel + /cmd_vel_joy -> /cmd_vel_mux)
   4. teleop_twist_joy        (/joy -> /cmd_vel_joy)
   5. rplidar_ros             (/scan)
