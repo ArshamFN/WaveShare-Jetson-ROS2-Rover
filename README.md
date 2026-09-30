@@ -346,15 +346,25 @@ there. A reading that fails or hangs never causes a change.
    nmcli con modify "<home network>" connection.autoconnect-priority 10
    ```
 
-4. The network watchdog; its interface and connection names are set at the top of the
-   script:
+4. The network watchdog. Its settings file holds the home Wi-Fi's name, so it lives
+   outside the repository, in `/etc/rover-net-watchdog.conf`. The first command installs
+   the template only if that file does not exist yet; in the editor, replace
+   `[Home Wi-Fi name here]` with the NetworkManager name of the home Wi-Fi
+   (`nmcli -t -f NAME,TYPE connection show` lists them):
 
    ```bash
+   [ -e /etc/rover-net-watchdog.conf ] || sudo install -m 0600 -o root -g root tools/network/rover-net-watchdog.conf /etc/rover-net-watchdog.conf
+   sudoedit /etc/rover-net-watchdog.conf
    sudo install -m 0755 -o root -g root tools/network/rover-net-watchdog.sh /usr/local/sbin/rover-net-watchdog
    sudo install -m 0644 -o root -g root tools/network/rover-net-watchdog.service /etc/systemd/system/rover-net-watchdog.service
    sudo systemctl daemon-reload
-   sudo systemctl enable --now rover-net-watchdog
+   sudo systemctl enable rover-net-watchdog
+   sudo systemctl restart rover-net-watchdog
    ```
+
+   If the settings file is missing or still holds the placeholder, the watchdog logs the
+   reason and exits without changing the network. NetworkManager's boot fallback works
+   without it.
 
 5. The `ROS_LOCALHOST_ONLY` line from [Build](#build).
 

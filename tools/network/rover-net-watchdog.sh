@@ -4,11 +4,14 @@
 # Leaves the hotspot for home Wi-Fi only after the hotspot has had no
 # connected clients for IDLE_BEFORE_HOME seconds, so it never cuts off a
 # pendant mid-run. When a reading fails or hangs, it takes no action.
+#
+# The interface and connection names are specific to each network, so they
+# live outside the repository, in /etc/rover-net-watchdog.conf (or the file
+# given as the first argument). Install it from the template
+# tools/network/rover-net-watchdog.conf and fill it in there.
 set -u
 
-IFACE="wlP1p1s0"
-HOME_CON="[Home Wi-Fi name here]"
-AP_CON="rover-ap"
+CONF="${1:-/etc/rover-net-watchdog.conf}"
 CHECK_EVERY=15          # seconds between checks
 NO_LINK_BEFORE_AP=60    # no Wi-Fi connection this long: start the hotspot
 IDLE_BEFORE_HOME=300    # hotspot without clients this long: try home Wi-Fi
@@ -17,6 +20,40 @@ AP_START_TIMEOUT=30     # seconds allowed for one hotspot start
 READ_TIMEOUT=10         # seconds allowed for any status read
 
 log() { echo "$*"; }
+
+config_error() {
+    # Exit status 78 stops systemd from restarting it (RestartPreventExitStatus).
+    log "ERROR: $*"
+    log "Not running. Fix $CONF, then: sudo systemctl restart rover-net-watchdog"
+    exit 78
+}
+
+load_config() {
+    local key val owner mode
+    { [ -f "$CONF" ] && [ -r "$CONF" ]; } \
+        || config_error "cannot read $CONF (install it from tools/network/rover-net-watchdog.conf)"
+    # It runs as root and executes this file, so only root may be able to change it.
+    read -r owner mode < <(stat -c '%u %a' "$CONF")
+    { [ "${owner:-}" = 0 ] && [ -n "${mode:-}" ] && [ $((8#$mode & 8#022)) -eq 0 ]; } \
+        || config_error "$CONF must be owned by root and writable only by root"
+    bash -n "$CONF" 2>/dev/null || config_error "$CONF has a syntax error (check the quotes)"
+    IFACE=""
+    HOME_CON=""
+    AP_CON=""
+    set +u
+    # shellcheck source=/dev/null
+    . "$CONF" > /dev/null 2>&1
+    set -u
+    for key in IFACE HOME_CON AP_CON; do
+        val="${!key-}"
+        val="${val%$'\r'}"      # tolerate a file saved with Windows line endings
+        printf -v "$key" '%s' "$val"
+        [ -n "$val" ] || config_error "$key is not set in $CONF"
+        case "$val" in
+            \[*here\]) config_error "$key in $CONF still holds its placeholder" ;;
+        esac
+    done
+}
 
 one_line() { tr '\n' ' ' | sed 's/ *$//'; }
 
@@ -65,6 +102,8 @@ start_ap() {
 try_home() {
     local out rc
     out="$(timeout $((HOME_TRY_TIMEOUT + 10)) nmcli --wait "$HOME_TRY_TIMEOUT" con up "$HOME_CON" 2>&1)"; rc=$?
+    # Keep the home network's name out of the log.
+    out="${out//"$HOME_CON"/[home]}"
     if [ "$rc" -eq 0 ]; then
         log "joined home Wi-Fi"
     else
@@ -73,10 +112,11 @@ try_home() {
     fi
 }
 
+load_config
 no_link_since=""
 idle_since=""
 read_failed=0
-log "started: iface=$IFACE home='$HOME_CON' hotspot='$AP_CON'"
+log "started: iface=$IFACE hotspot='$AP_CON', home connection from $CONF"
 
 while true; do
     now=$(date +%s)

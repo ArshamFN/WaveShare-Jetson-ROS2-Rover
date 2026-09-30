@@ -402,8 +402,8 @@ carries `export ROS_LOCALHOST_ONLY=1` after the ROS setup lines.
 ### Network watchdog
 
 `tools/network/rover-net-watchdog.sh` is installed as `/usr/local/sbin/rover-net-watchdog`
-and run by `rover-net-watchdog.service` with `Restart=always`. The interface and
-connection names are set at the top of the script, with these constants:
+and run by `rover-net-watchdog.service` with `Restart=always`. Its timing constants are
+set at the top of the script:
 
 | Constant | Value | Role |
 |---|---|---|
@@ -413,6 +413,11 @@ connection names are set at the top of the script, with these constants:
 | `HOME_TRY_TIMEOUT` | 40 s | Limit for one home Wi-Fi attempt |
 | `AP_START_TIMEOUT` | 30 s | Limit for one hotspot start |
 | `READ_TIMEOUT` | 10 s | Limit for any status read |
+
+I kept the interface and connection names out of the script. It reads `IFACE`,
+`HOME_CON` and `AP_CON` from `/etc/rover-net-watchdog.conf`, which stays outside the
+repository and is installed from the template `tools/network/rover-net-watchdog.conf`; a
+missing or placeholder value makes it exit with status 78, which systemd does not restart.
 
 The two `nmcli --wait` calls also run under `timeout` with 10 s more than their own
 limit, as the backstop.

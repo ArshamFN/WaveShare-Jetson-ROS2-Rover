@@ -8,6 +8,8 @@ Type=simple
 ExecStart=/usr/local/sbin/rover-net-watchdog
 Restart=always
 RestartSec=5
+# 78: the settings file is missing or incomplete; restarting cannot fix that.
+RestartPreventExitStatus=78
 
 [Install]
 WantedBy=multi-user.target
