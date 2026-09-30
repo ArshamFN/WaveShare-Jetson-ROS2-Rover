@@ -25,6 +25,7 @@ dedicated file in this folder with full details.
 | 012 | 2026-08-18 | Switching to Lidar-Based Odometry | ✅ Complete |
 | 013 | 2026-08-21 | Nav2 Integration and First Autonomous Navigation | ✅ Complete |
 | 014 | 2026-09-24 | Stack Audit, RF2O Startup Race, and the Wheel-Speed Floor | ✅ Complete |
+| 015 | 2026-09-25 | Handheld Control Unit on the ROG Ally Without a Router | ✅ Complete |
 
 ---
 
@@ -393,5 +394,41 @@ repository with third-party packages pinned in `rover.repos`, and a fresh clone 
 builds and runs the full stack.
 
 **→ [Full session log](2026-09-24-session-014-Stack-Audit-RF2O-Startup-Race-and-the-Wheel-Speed-Floor.md)**
+
+---
+
+## Session 015 — 2026-09-25: Handheld Control Unit on the ROG Ally Without a Router
+
+**Goal:** Operate the rover from a handheld ASUS ROG Ally anywhere in the house, with the
+live map, Nav2 goals, stick driving, stack control, map saving and a safe shutdown, and
+with no laptop, no NoMachine session, and no dependence on the home router.
+
+**Summary:** I dropped the planned custom Windows app before building it, because
+Foxglove already draws maps, scans, costmaps and paths and publishes goals; the Ally runs
+Foxglove desktop and the Jetson runs `foxglove_bridge` on port 8765, so all the custom
+work is on the robot. Nav2 publishes velocity from both the smoother and the behavior
+server, so instead of touching Nav2 I put `twist_mux` on the driver's input: `/cmd_vel`
+at priority 10, the pendant stick on `/cmd_vel_joy` at 100 behind the LB deadman
+(0.25 m/s, 1.5 rad/s), and teleop-mode and e-stop locks at 50 and 255. Four systemd user
+services run the bridge, a new `pendant_control` node, bringup and Nav2; because the MFD
+board keeps executing its last command, every bringup stop sends the zero command twice,
+50 ms apart. The node toggles each service, saves maps by name, and powers off after two
+presses within 5 s. For router-free use the Jetson hosts `NullIsland-Rover` at
+`10.42.0.1`, which works on 2.4 GHz but fails on 5 GHz with the card's regulatory country
+unset. Switching networks then split the ROS graph, since nodes advertise the addresses
+they started with; every node runs on the Jetson, so `ROS_LOCALHOST_ONLY=1` fixed it.
+At boot NetworkManager joins home Wi-Fi when it is in range and starts the hotspot
+otherwise (right on 6 of 6 reboots), and a root watchdog starts the hotspot after 60 s
+without Wi-Fi and tries home only after 5 minutes with no client connected, taking no
+action on any reading that fails or hangs.
+Still open: the watchdog's running cycle is untested on the rover, the hotspot drops for
+up to about 70 s every 5 minutes when nobody is connected, the locks have no pendant
+buttons and fail open, and the Foxglove layout is not in the repository.
+
+[![The handheld control unit driving the rover while Nav2 navigates the house](https://img.youtube.com/vi/RMOsRye9tLc/maxresdefault.jpg)](https://www.youtube.com/watch?v=RMOsRye9tLc)
+
+*[Watch on YouTube](https://www.youtube.com/watch?v=RMOsRye9tLc): the handheld control unit driving the rover while Nav2 navigates the house.*
+
+**→ [Full session log](2026-09-25-session-015-Handheld-Control-Unit-on-the-ROG-Ally-Without-a-Router.md)**
 
 ---
