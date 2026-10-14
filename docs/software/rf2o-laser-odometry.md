@@ -5,12 +5,17 @@ consecutive LiDAR scans, with no wheel encoders or IMU involved.
 
 ## Credit
 
-This is third-party software, included here in full so the repository is self-contained
-and reproducible.
+This is third-party software. It is not stored in this repository: `rover.repos` pins a
+patched fork, [`ArshamFN/rf2o_laser_odometry`](https://github.com/ArshamFN/rf2o_laser_odometry)
+at commit `82a99d4`, and `vcs import` pulls it into `src/`.
 
 Original algorithm and implementation by the MAPIR lab at the University of Málaga.
-The ROS2 port used here is the [Adlink-ROS
-fork](https://github.com/Adlink-ROS/rf2o_laser_odometry), `humble-devel` branch.
+The fork is based on the [Adlink-ROS
+ROS2 port](https://github.com/Adlink-ROS/rf2o_laser_odometry), `humble-devel` branch, at
+commit `313bb4c`. It adds one line: the node retries its `base_link → laser` transform
+lookup on every scan until it succeeds, instead of falling back to an identity transform
+when the lookup fails on the first scan (see the
+[Session 014 log](../testing/2026-09-24-session-014-Stack-Audit-RF2O-Startup-Race-and-the-Wheel-Speed-Floor.md)).
 
 The algorithm is described in *Planar Odometry from a Radial Laser Scanner. A Range
 Flow-based Approach* (ICRA 2016), by Jaimez, Monroy, and Gonzalez-Jimenez.
@@ -53,10 +58,12 @@ sources without raising any error.
 
 ## Build
 
+The package is pulled at the exact commit pinned in `rover.repos`, along with the other
+third-party packages. From the workspace root:
+
 ```bash
-cd ~/ros2_ws/src
-git clone -b humble-devel https://github.com/Adlink-ROS/rf2o_laser_odometry.git
 cd ~/ros2_ws
+vcs import src < rover.repos
 colcon build --symlink-install --packages-select rf2o_laser_odometry
 source install/setup.bash
 ```

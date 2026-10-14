@@ -27,6 +27,7 @@ dedicated file in this folder with full details.
 | 014 | 2026-09-24 | Stack Audit, RF2O Startup Race, and the Wheel-Speed Floor | ✅ Complete |
 | 015 | 2026-09-25 | Handheld Control Unit on the ROG Ally Without a Router | ✅ Complete |
 | 016 | 2026-10-06 | Autonomous Mapping With My Own Frontier Explorer | ✅ Complete |
+| 017 | 2026-10-13 | How Each Node Works, and the Conclusion of Project #1 | ✅ Complete |
 
 ---
 
@@ -468,5 +469,35 @@ node now drives home first and saves the final map with the rover at rest.
 the Session 015 map and the Oct 7 map.*
 
 **→ [Full session log](2026-10-06-session-016-Autonomous-Mapping-With-My-Own-Frontier-Explorer.md)**
+
+---
+
+## Session 017 — 2026-10-13: How Each Node Works, and the Conclusion of Project #1
+
+**Goal:** Explain how every node I wrote works, with one flowchart each and the reasons
+behind it, and close Project #1 with a conclusion.
+
+**Summary:** I documented the whole stack: a diagram of how the nodes connect, one
+Mermaid flowchart for each node I wrote, and a plain-language account of each one with
+the sessions that decided it. `rover_driver` turns velocity commands into wheel speeds in
+m/s, ramped at 0.8 m/s² and 2.0 rad/s², lifted as a pair to a 0.10 m/s floor and clamped
+at 0.956 m/s. Reading it closely showed that it acts only when it processes a feedback
+packet from the board, about 12 Hz rather than its 20 Hz timer, so its 0.5 s command
+watchdog depends on that feedback, which the READMEs now say. The RF2O chart sets my
+one-line startup fix against the Adlink-ROS port; `pendant_control` runs the services,
+map saves and the two-press shutdown; `rover_explorer` and its planner choose frontiers
+by driving distance, reachability for the robot's footprint, a viewpoint that sees the
+frontier, a route through the 20 cheapest and commitment to the current target; and
+`explore_autosave` checkpoints the map, drives home and then saves the final map at rest.
+The network watchdog takes no action on a reading it cannot make. Gyrodometry with ZUPT
+and the heading hold, which no longer drive the robot, have their own section, with
+tables of how the odometry and the motor mix changed. I also corrected code comments
+that described earlier versions of the driver, the Nav2 parameters and the planner, and
+pointed the RF2O build notes at my fork. After 17 sessions and three odometry designs,
+one command makes the rover explore the house, in 453 s on its first run, drive home and
+save the map. It still navigates only on the map it builds live, and one battery feeds
+both the computer and the motors.
+
+**→ [Full session log](2026-10-13-session-017-How-Each-Node-Works-and-the-Conclusion-of-Project-1.md)**
 
 ---

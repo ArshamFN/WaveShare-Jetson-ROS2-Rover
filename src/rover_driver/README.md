@@ -35,6 +35,10 @@ side effect.
 **Command watchdog.** If no `/cmd_vel` message arrives for 0.5 s, the node treats the
 command as zero, so a crashed controller cannot leave the rover driving on its last
 instruction. The ramp still applies, so the rover decelerates rather than stopping dead.
+The check, like every wheel command, runs only when the node processes a T:1001 feedback
+packet from the board. If that feedback stops, or the node itself stops, no zero command
+is sent and the board keeps executing its last command; the `rover-bringup` service
+sends a zero command after the whole stack stops.
 
 **Battery monitoring.** The board reports pack voltage in every T:1001 feedback packet
 (`v`, volts × 100). The node publishes it on `/battery_voltage`, logs a warning at
@@ -42,9 +46,10 @@ instruction. The ramp still applies, so the rover decelerates rather than stoppi
 both the Jetson and the motors, so a falling voltage is the early sign of a brownout.
 
 **Zero Velocity Update (ZUPT).** Gyroscope bias drifts with temperature over a long
-session. Whenever both encoders report near-zero movement for a full second, the robot
-is stationary and any gyro reading is pure bias, so the node nudges its bias estimate
-toward the current reading. This runs continuously throughout a session rather than only
+session. Whenever both encoders report near-zero movement for 20 feedback packets in a
+row, about 1.7 s at the roughly 12 Hz the node processes them, the robot is stationary
+and any gyro reading is pure bias, so the node nudges its bias estimate toward the
+current reading. This runs continuously throughout a session rather than only
 at startup.
 
 A forward-only **heading hold** PD controller is also implemented: during straight-line

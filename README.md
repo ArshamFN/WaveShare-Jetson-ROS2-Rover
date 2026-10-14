@@ -2,7 +2,7 @@
 
 A 4WD autonomous ground robot built on the Waveshare UGV02 platform with an NVIDIA Jetson Orin Nano Super, running ROS2 Humble with live SLAM, Nav2 autonomous navigation, and autonomous mapping with a custom frontier explorer.
 
-![Project Status](https://img.shields.io/badge/status-in%20progress-yellow)
+![Project Status](https://img.shields.io/badge/status-complete-brightgreen)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)
 ![Platform](https://img.shields.io/badge/platform-Jetson%20Orin%20Nano-green)
 
@@ -142,7 +142,7 @@ the same start poses.
 - ✅ LiDAR orientation corrected in the URDF: the RPLidar C1's zero-bearing beam faces the rear of the rover
 - ✅ Motor constants measured: `MAX_WHEEL_SPEED = 0.956 m/s` (LiDAR wall ranging), `TRACK_WIDTH = 0.174 m` (caliper), acceleration 0.648 m/s², deceleration 0.699 m/s²
 - ✅ Nav2 integrated with Regulated Pure Pursuit: autonomous navigation to goal poses, including through narrow gaps
-- ✅ `/cmd_vel` watchdog: the rover stops if commands stop arriving for 0.5 s
+- ✅ `/cmd_vel` watchdog: the driver zeroes the wheel command if commands stop arriving for 0.5 s; the check runs on each feedback packet from the MFD board, so it depends on that feedback
 - ✅ Battery monitoring on `/battery_voltage`, with warnings at 10.5 V and 9.6 V
 - ✅ RF2O startup race fixed: the laser pose lookup now retries until the transform exists (patched fork)
 - ✅ Wheel commands sent in m/s to the MFD's closed-loop speed controller, with a 0.10 m/s floor that makes low-speed motion and in-place rotation reliable on every surface tested
@@ -458,9 +458,11 @@ JSON-over-serial protocol. It converts each `geometry_msgs/Twist` into left and 
 wheel speed targets in m/s, which the board's closed-loop controller holds. Non-zero
 targets below the controller's regulation floor are scaled up together to 0.10 m/s,
 preserving the commanded turn curvature. The node also applies a velocity ramp on both
-axes, stops the rover if `/cmd_vel` goes stale for 0.5 s, and runs ZUPT for continuous
-gyro bias correction. It publishes wheel-derived odometry to `/odom_wheel`, raw
-gyroscope data to `/imu/gz`, and battery voltage to `/battery_voltage`. It does not
+axes, zeroes the wheel command if `/cmd_vel` goes stale for 0.5 s (checked on each
+feedback packet from the board, so the check depends on that feedback), and runs ZUPT
+for continuous gyro bias correction. It publishes wheel-derived odometry to
+`/odom_wheel`, raw gyroscope data to `/imu/gz`, and battery voltage to
+`/battery_voltage`. It does not
 broadcast `odom → base_link`; that transform is owned by `rf2o_laser_odometry`. A
 forward-only heading hold PD controller is implemented but disabled by default, because
 Nav2 runs its own closed loop.
