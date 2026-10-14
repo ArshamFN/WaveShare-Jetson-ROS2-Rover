@@ -1,15 +1,30 @@
 #!/usr/bin/env python3
 """
-rover_driver_node.py — Hybrid Odometry Node
-============================================
-Heading  : gyroscope gz integration   → drift-free turns, no TRACK_WIDTH needed
-Position : encoder average (odl+odr)/2 → robust linear displacement
+rover_driver_node.py: driver for the Waveshare UGV02 MFD board
+==============================================================
+Commands : /cmd_vel (remapped to /cmd_vel_mux in bringup) -> command watchdog
+           -> velocity ramp -> mix_to_wheel_speeds() -> T:1 wheel speed
+           targets in m/s over /dev/rover. The board runs closed-loop wheel
+           speed control on them (Session 014).
+Feedback : each T:1001 packet gives the battery voltage (/battery_voltage),
+           raw gyro z (/imu/gz) and the encoders. Wheel odometry, with the
+           gyro for heading and the encoder average for distance (Session
+           009), is published on /odom_wheel for comparison only:
+           rf2o_laser_odometry owns /odom and odom -> base_link (Session 012).
+
+Timing
+------
+A 20 Hz timer handles the newest T:1001 packet, if one has arrived since the
+last tick, and does nothing otherwise. Everything else, including every
+wheel command and the command watchdog, runs only then, at the rate packets
+are processed: about 12 Hz, measured in Session 014.
 
 Startup sequence
 ----------------
-The node collects gz samples for BIAS_DURATION seconds before publishing
-any odometry.  Keep the robot completely still during this window; a log
-message will confirm when calibration is done.
+The node collects gz samples for at least BIAS_DURATION seconds before
+publishing any odometry or sending any wheel command.  Keep the robot
+completely still during this window; a log message will confirm when
+calibration is done.
 
 Tunable constants
 -----------------
@@ -17,11 +32,11 @@ LINEAR_SCALE   Converts raw odl/odr firmware units to metres.
                Determined empirically: 0.01 m/unit.
 
 GZ_SCALE       Converts (raw_gz × seconds) to radians.
-               Obtain with calibrate_track_width.py (Phase 2 — 360° hand
-               rotation).  A fresh run of that script prints the value;
-               paste it here before using this node for SLAM.
+               Calibrated in Session 009 with Phase 2 of
+               scripts/calibrate_track_width.py (360 deg hand rotation).
 
-BIAS_DURATION  Seconds of gz samples collected at startup for bias removal.
+BIAS_DURATION  Minimum seconds of gz samples collected at startup for bias
+               removal.
 
 HEADING_KP     Proportional gain for the heading hold controller.
                During straight-line travel (angular == 0), any drift from
@@ -46,13 +61,15 @@ ANGULAR_RAMP_RATE
                so turns still feel responsive.
 
 ZUPT_ODO_THRESHOLD
-               Maximum encoder delta (raw units, per tick) below which the
-               robot is considered stationary for Zero Velocity Update.
+               Maximum encoder delta (raw units, per processed packet) below
+               which the robot is considered stationary for Zero Velocity
+               Update.  0.5 units is 5 mm at LINEAR_SCALE 0.01.
 
 ZUPT_SETTLE_TICKS
                Consecutive stationary ticks required before the bias update
                is allowed to fire.  Prevents mid-turn pauses corrupting the
-               estimate.  At 20 Hz, 20 ticks = 1 second.
+               estimate.  Ticks are processed packets: 20 take about 1.7 s at
+               the ~12 Hz packet rate (see Timing).
 
 ZUPT_ALPHA     Exponential moving average factor for the bias update.
                Each qualifying stationary tick nudges _gz_bias by this
@@ -69,18 +86,33 @@ CMD_TIMEOUT    Seconds without an incoming cmd_vel before the motors are
                zeroed.  Prevents the rover running indefinitely on the last
                received command if the commanding node crashes or the network
                drops.  The velocity ramp still applies, so a watchdog trip
-               decelerates rather than dead-stopping.
+               decelerates rather than dead-stopping.  Like every wheel
+               command, the check runs only when a feedback packet is
+               processed (see Timing): if the board's feedback stops, or this
+               node stops, no zero command is sent and the board keeps
+               executing its last command.
 
 TRACK_WIDTH    Distance between the left and right wheel contact patches (m).
                Used only to convert a commanded angular velocity into a wheel
-               speed differential.  Odometry does not use it — heading comes
-               from the gyro (Session 011).
+               speed differential.  Odometry does not use it: heading comes
+               from the gyro (Session 009).  Measured with calipers in
+               Session 013: 0.174 m.
 
 MAX_WHEEL_SPEED
-               Wheel-tangential speed (m/s) produced at full motor duty.
-               Converts SI velocity commands into the MFD's normalised +/-1.0
-               duty values.  UNCALIBRATED — see measurement note at the
-               differential mix.
+               Top wheel speed (m/s), measured in Session 013 by LiDAR wall
+               ranging: 0.956.  Wheel targets are clamped to +/- this value.
+               It is not a unit conversion: T:1 takes wheel speeds in m/s
+               (Session 014).
+
+MIN_WHEEL_SPEED
+               Low-speed floor (m/s).  The board cannot regulate a wheel below
+               about 0.08 m/s with its 20 PPR encoders (measured on three
+               surfaces, Session 014).  A non-zero command whose faster wheel
+               is below 0.10 m/s has both wheels scaled up by the same factor,
+               which keeps the commanded turn curvature.
+
+WHEEL_ZERO_EPS Wheel targets whose faster wheel is below this (m/s) are sent as
+               exactly zero, so stop means stop.
 
 BIAS_NOISE_THRESHOLD
                Maximum acceptable standard deviation (raw gyro counts) of the
@@ -156,8 +188,8 @@ ANGULAR_RAMP_RATE = 2.0           # rad/s²
 
 # Zero Velocity Update (ZUPT): continuous gyro bias correction while stationary.
 # Counteracts temperature-dependent gyro drift over long mapping sessions.
-ZUPT_ODO_THRESHOLD = 0.5    # raw encoder units per tick (~0.5 mm)
-ZUPT_SETTLE_TICKS  = 20     # ticks (~1 second at 20 Hz)
+ZUPT_ODO_THRESHOLD = 0.5    # raw encoder units per processed packet (5 mm)
+ZUPT_SETTLE_TICKS  = 20     # processed packets (about 1.7 s at ~12 Hz)
 ZUPT_ALPHA         = 0.05   # EMA factor — slow, stable bias nudge
 
 # Heading hold master switch (Session 013).
@@ -166,26 +198,20 @@ ZUPT_ALPHA         = 0.05   # EMA factor — slow, stable bias nudge
 # Set True only for manual teleop driving.
 USE_HEADING_HOLD = False
 
-# Seconds without a cmd_vel before motors are zeroed.
+# Seconds without a cmd_vel before motors are zeroed.  Checked only when a
+# feedback packet is processed; see the module docstring.
 CMD_TIMEOUT = 0.5
 
-# ── Command unit conversion (Session 013) ───────────────────────────────────
-# Nav2 issues cmd_vel in SI units (m/s, rad/s). The MFD expects normalised
-# +/-1.0 motor duty values. These two constants bridge that gap.
+# ── Wheel command constants (Sessions 013 and 014) ──────────────────────────
+# Nav2 issues cmd_vel in SI units (m/s, rad/s), and T:1 takes wheel speed
+# targets in m/s (Session 014), so no unit conversion is needed. These
+# constants shape the targets in mix_to_wheel_speeds().
 
 # Track width: distance between left and right wheel contact patches.
-# 0.08 m is the value carried in calibrate_track_width.py. NOT re-measured
-# since the UGV02 migration — verify with calipers.
 TRACK_WIDTH = 0.174        # m — measured S013, front wheel contact patch to contact patch (physical geometry, not the slip-fitted 0.08 from calibrate_track_width.py)
 
-# Wheel-tangential speed at full motor duty. UNCALIBRATED PLACEHOLDER.
-# Measure before trusting Nav2 path tracking:
-#   1. ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 1.0}}"
-#   2. ros2 topic echo /odom --field pose.pose.position.x
-#   3. Run ~3 s on a clear straight. Distance / time = MAX_WHEEL_SPEED.
-# Until measured, commanded velocities will not match actual velocities and
-# Nav2 controller tuning is meaningless.
-MAX_WHEEL_SPEED = 0.956     # m/s at full duty — measured S013 via LiDAR wall ranging
+# Top wheel speed, used only as a clamp on wheel targets.
+MAX_WHEEL_SPEED = 0.956     # m/s, measured S013 via LiDAR wall ranging
 MIN_WHEEL_SPEED = 0.10    # m/s. Firmware cannot regulate below ~0.08 m/s (20 PPR encoders); measured on 3 surfaces, Session 014
 WHEEL_ZERO_EPS  = 0.005   # m/s. Wheel targets below this are sent as exactly zero
 
@@ -312,7 +338,7 @@ class RoverDriverNode(Node):
             target=self._serial_reader, daemon=True)
         self._reader_thread.start()
 
-        # ── Main loop timer (20 Hz) ──────────────────────────────────────────
+        # ── Main loop timer (20 Hz; acts only on a new feedback packet) ─────
         self._timer = self.create_timer(0.05, self._loop)
 
         self.get_logger().info(

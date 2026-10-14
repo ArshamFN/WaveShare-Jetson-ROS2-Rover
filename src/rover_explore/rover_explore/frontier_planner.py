@@ -16,10 +16,13 @@ How a decision is made:
 3. Viewpoint. Rays are cast back from up to view_samples frontier cells
    through known-free space, only within view_half_angle of the direction the
    free side lies in, so a grazing glance along the frontier does not count.
-   A viewpoint is a reachable cell that sees at least a quarter of the
-   samples, preferring cells with goal_clearance of room. The one with the
-   shortest driving distance wins. A frontier with no viewpoint (for example
-   one seen through a 1 cm gap between boxes) is skipped, not tried and failed.
+   Viewpoint candidates are reachable cells, taken from the first of four
+   tiers that has any: cells with goal_clearance of room that see at least a
+   quarter of the samples (and at least two); cells that see that much
+   without the room; cells with the room that see at least one sample; and
+   any reachable cell that sees one. In that tier, the cell with the shortest
+   driving distance wins. A frontier with no viewpoint (for example one seen
+   through a 1 cm gap between boxes) is skipped, not tried and failed.
 4. Route. A frontier's cost is the driving distance to its viewpoint plus the
    turn needed to set off. With use_route the frontiers are ordered by an open
    travelling-salesman route (nearest neighbour, then 2-opt, on driving

@@ -102,7 +102,8 @@ behavior_server:
 velocity_smoother:
   ros__parameters:
     use_sim_time: false
-    smoothing_frequency: 20.0         # matches rover_driver's 20 Hz loop
+    smoothing_frequency: 20.0         # rover_driver's timer is 20 Hz; it acts on each
+                                      # feedback packet, about 12 Hz
     scale_velocities: false
     feedback: "OPEN_LOOP"
     max_velocity:  [0.26,  0.0,  1.0]
