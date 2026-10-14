@@ -26,6 +26,7 @@ dedicated file in this folder with full details.
 | 013 | 2026-08-21 | Nav2 Integration and First Autonomous Navigation | ✅ Complete |
 | 014 | 2026-09-24 | Stack Audit, RF2O Startup Race, and the Wheel-Speed Floor | ✅ Complete |
 | 015 | 2026-09-25 | Handheld Control Unit on the ROG Ally Without a Router | ✅ Complete |
+| 016 | 2026-10-06 | Autonomous Mapping With My Own Frontier Explorer | ✅ Complete |
 
 ---
 
@@ -430,5 +431,42 @@ buttons and fail open, and the Foxglove layout is not in the repository.
 *[Watch on YouTube](https://www.youtube.com/watch?v=RMOsRye9tLc): the handheld control unit driving the rover while Nav2 navigates the house.*
 
 **→ [Full session log](2026-09-25-session-015-Handheld-Control-Unit-on-the-ROG-Ally-Without-a-Router.md)**
+
+---
+
+## Session 016 — 2026-10-06: Autonomous Mapping With My Own Frontier Explorer
+
+**Goal:** Have the rover explore the house on its own, build the map as it goes, save it
+when it is complete, and drive back to where it started, with one start command and
+nobody steering.
+
+**Summary:** I built exploration on top of the Session 015 stack around `explore_lite`:
+an exploration package, an autosave node that checkpoints the map, saves the final map
+and logs every run, and a `rover-explore` service. Getting there took a tf2 upgrade to
+0.25.24 from ros2-testing to fix a deadlock that froze Nav2, a reboot to clear stale
+Fast DDS shared memory left by the crashes, and moving the return home into the autosave
+node, because explore_lite's own cancel-all could cancel its return goal. On Oct 7
+explore_lite mapped the whole house in 591 s, but it completed none of its 57 goals and
+abandoned 51 halfway. Its source explained why: straight-line frontier costs, no
+commitment to a goal, centroid goals that can be unreachable, and permanent blacklisting
+on Humble. Before changing anything I wrote an offline simulator that runs exploration
+policies from the same start poses on real maps of the house. It showed that tuning
+explore_lite's parameters does not fix it, that my own first idea, a forward sector rule,
+made one start drive 61% more, and that driving distance, reachability for the robot's
+footprint, commitment and a route through all frontiers cut the distance by about a
+quarter. So I wrote my own explorer, `rover_explorer`, with every decision in one module
+without ROS that the simulator runs unchanged; porting it exposed a failure at gaps the
+lidar sees through, which I fixed before it reached the robot. In simulation it drives
+19% and 28% less than explore_lite on the two maps. On the robot it explored the house
+in 453 s, finished one area before moving to the next, ended with no reachable frontier
+left, and drove home. The first final save failed during the drive home, so the autosave
+node now drives home first and saves the final map with the rover at rest.
+
+![Simulated explore_lite and rover_explorer from the same start poses](../../images/testing/session-016/session-016-sim-explore-lite-vs-rover-explorer.png)
+
+*Simulated explore_lite (left) and rover_explorer (right) from the same start poses, on
+the Session 015 map and the Oct 7 map.*
+
+**→ [Full session log](2026-10-06-session-016-Autonomous-Mapping-With-My-Own-Frontier-Explorer.md)**
 
 ---

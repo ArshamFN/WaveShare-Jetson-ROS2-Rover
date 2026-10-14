@@ -1,6 +1,6 @@
 # Autonomous Rover - Jetson + ROS2 Navigation
 
-A 4WD autonomous ground robot built on the Waveshare UGV02 platform with an NVIDIA Jetson Orin Nano Super, running ROS2 Humble with live SLAM and Nav2 autonomous navigation.
+A 4WD autonomous ground robot built on the Waveshare UGV02 platform with an NVIDIA Jetson Orin Nano Super, running ROS2 Humble with live SLAM, Nav2 autonomous navigation, and autonomous mapping with a custom frontier explorer.
 
 ![Project Status](https://img.shields.io/badge/status-in%20progress-yellow)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)
@@ -67,6 +67,7 @@ with sufficient runtime for a full mapping run.
 - **Operating System:** Ubuntu 22.04 LTS (JetPack 6.2.1)
 - **ROS Distribution:** ROS2 Humble Hawksbill
 - **Navigation Framework:** Nav2 with the Regulated Pure Pursuit controller
+- **Exploration:** `rover_explorer`, a custom frontier explorer; m-explore-ros2's `explore_lite` is kept as a baseline
 - **SLAM Algorithm:** slam_toolbox (synchronous mapping mode, CeresSolver)
 - **Odometry:** rf2o_laser_odometry (Range Flow-based 2D Odometry from laser scans)
 - **Visualization:** RViz2
@@ -75,7 +76,7 @@ with sufficient runtime for a full mapping run.
 
 ## Current Status
 
-**Last Updated:** September 29, 2026
+**Last Updated:** October 13, 2026
 
 The rover navigates autonomously. Nav2 plans and follows paths on a map that
 slam_toolbox builds live, and the rover drives to goal poses set in RViz, including
@@ -99,6 +100,15 @@ pose, costmaps, and Nav2's planned path; sends Nav2 goals; drives the rover with
 Ally's sticks behind a deadman button; starts and stops the stack; saves maps; and shuts
 the Jetson down. The Jetson joins home Wi-Fi when it is in range and otherwise hosts its
 own network, so the pendant needs no router.
+
+The rover also maps the house on its own. Once exploration is started, `rover_explorer`
+chooses where to go next from the live map and sends Nav2 goals until no reachable
+frontier is left, finishing one area before moving to the next. The autosave node then
+drives the rover back to its start pose and saves the final map into `maps/`, keeping
+map checkpoints, slam_toolbox pose graphs, and an event and battery log for every run.
+`rover_explorer` replaced `explore_lite` after an offline simulator, run on real maps of
+the house with the explorer's own planning code, showed it driving 19 to 28% less from
+the same start poses.
 
 [![The handheld control unit driving the rover while Nav2 navigates the house](https://img.youtube.com/vi/RMOsRye9tLc/maxresdefault.jpg)](https://www.youtube.com/watch?v=RMOsRye9tLc)
 
@@ -144,6 +154,12 @@ own network, so the pendant needs no router.
 - ✅ Pendant control node: one-button start and stop, map saving by name, and a two-press safe shutdown
 - ✅ Router-free operation: the Jetson hosts its own Wi-Fi network when home Wi-Fi is out of range
 - ✅ ROS 2 discovery restricted to localhost, so a Wi-Fi change cannot split the ROS graph
+- ✅ tf2 deadlock that froze Nav2 fixed by upgrading geometry2 to 0.25.24
+- ✅ Autonomous mapping: `rover_explorer` explores the whole house without an operator and stops when no reachable frontier is left
+- ✅ Frontier planner based on driving distance, reachability for the rover's footprint, viewpoints that see the frontier, commitment to the current target, and a route through the frontiers
+- ✅ Map autosave: checkpoints every 5 minutes, return to the start pose, then the final map save, with per-run event, battery, and Nav2 logs
+- ✅ Offline exploration simulator on real maps of the house, running the robot's own planner code
+- ✅ systemd service for exploration that runs only while bringup and Nav2 are running
 
 ### Known Hardware Notes
 
@@ -183,8 +199,12 @@ own network, so the pendant needs no router.
 ```bash
 sudo apt install ros-humble-slam-toolbox ros-humble-navigation2 ros-humble-nav2-bringup \
   ros-humble-teleop-twist-keyboard python3-vcstool python3-serial \
-  ros-humble-foxglove-bridge ros-humble-twist-mux ros-humble-teleop-twist-joy iw
+  ros-humble-foxglove-bridge ros-humble-twist-mux ros-humble-teleop-twist-joy iw \
+  python3-scipy
 ```
+
+- tf2 (geometry2) 0.25.24 or newer: 0.25.23 can deadlock Nav2 inside tf2's `Buffer`
+  (see the Session 016 log)
 
 - The `/dev/rover` udev symlink for the MFD board (see [`src/rover_driver/README.md`](src/rover_driver/README.md))
 
@@ -202,8 +222,9 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-`vcs import` pulls the two third-party packages at the exact commits pinned in
-`rover.repos`: a patched fork of `rf2o_laser_odometry` and Slamtec's `rplidar_ros`.
+`vcs import` pulls the three third-party packages at the exact commits pinned in
+`rover.repos`: a patched fork of `rf2o_laser_odometry`, Slamtec's `rplidar_ros`, and
+m-explore-ros2, whose `explore_lite` is kept as an exploration baseline.
 
 All ROS 2 nodes run on the Jetson, so ROS 2 discovery is restricted to localhost, which
 keeps a Wi-Fi change from splitting the ROS graph. The services and desktop launchers set
@@ -242,6 +263,30 @@ the navigation input, so either pendant lock blocks it. With the services from
 [Handheld Pendant](#handheld-pendant) installed, the pendant can also start and stop
 bringup and Nav2. Start them from one place at a time: the pendant refuses to start
 either while a copy started elsewhere is running.
+
+### Autonomous Exploration
+
+With bringup, Nav2, and the pendant control node running (the autosave node saves maps
+through `/pendant/save_map`), start exploration through its service:
+
+```bash
+systemctl --user start rover-explore
+journalctl --user -u rover-explore -f -o cat
+```
+
+or directly:
+
+```bash
+ros2 launch rover_explore explore.launch.py
+```
+
+Add `explorer:=explore_lite` to run the baseline instead. The rover explores until no
+reachable frontier is left, drives back to its start pose, and saves the final map as
+`maps/explore_<YYYYMMDD-HHMMSS>_final.pgm` and `.yaml`. Checkpoints, pose graphs, and
+the run's `events.csv` and `battery.csv` go to `~/rover_runs/explore_<YYYYMMDD-HHMMSS>/`.
+`systemctl --user stop rover-explore` pauses exploration, which cancels the current goal
+or the drive home, and then stops both nodes. A run stopped before exploration completes
+keeps its checkpoints and the live SLAM map, but saves no final map.
 
 ### Desktop Launchers
 
@@ -291,6 +336,7 @@ travels over Wi-Fi, so the chassis power switch remains the emergency stop.
 | `rover-control` | at boot | the `pendant_bridge` control node |
 | `rover-bringup` | on demand | `bringup.launch.py` without RViz, then `rover_zero_motors.py` after every stop or crash, because the MFD board keeps executing its last command |
 | `rover-nav2` | on demand | Nav2, stopping whenever bringup stops |
+| `rover-explore` | on demand | `explore.launch.py`; refuses to start unless bringup and Nav2 are running, stops with either, and pauses exploration before it stops |
 
 **Pendant interface.**
 
@@ -392,13 +438,16 @@ images/                    build and test photos
 maps/                      saved slam_toolbox maps
 scripts/                   calibration and test scripts
 tools/launchers/           desktop launchers for bringup, teleop, and Nav2
-tools/systemd/             systemd user services for the pendant and the stack
+tools/systemd/             systemd user services for the pendant, the stack, and exploration
 tools/network/             network watchdog: home Wi-Fi or the rover's own network
+tools/explore_sim/         offline exploration simulator
 src/rover_driver/          /cmd_vel to MFD bridge
 src/robot_description/     URDF, launch files, and parameters
 src/pendant_bridge/        pendant control node
+src/rover_explore/         frontier explorer and map autosave node
 src/rf2o_laser_odometry/   not tracked; pulled via rover.repos
 src/rplidar_ros/           not tracked; pulled via rover.repos
+src/m-explore-ros2/        not tracked; pulled via rover.repos
 ```
 
 ## ROS2 Packages
@@ -449,6 +498,39 @@ parameter is true, which only the installed service sets.
 ros2 run pendant_bridge control_node
 ```
 
+### rover_explore
+Autonomous mapping: the `rover_explorer` frontier explorer, the `explore_autosave` node,
+and `explore.launch.py`, which starts the autosave node and, 3 s later, the explorer.
+
+`rover_explorer` keeps every exploration decision in `frontier_planner.py`, which uses
+only numpy and scipy, so the offline simulator in `tools/explore_sim/` runs the same code.
+Every 2 s, and after each Nav2 goal ends, it finds the frontiers between known free and
+unknown space on `/map`, the cells the rover's footprint can reach, and for each frontier
+a viewpoint that sees a useful part of it, preferring viewpoints with 0.25 m of
+clearance. It ranks the frontiers by driving distance to their viewpoints plus a turn
+cost, orders the 20 cheapest into a route by the driving distances between viewpoints,
+keeps its current target unless the route is shorter without it, and sends one
+`navigate_to_pose` goal at a time, re-sending it only when the viewpoint moves 0.5 m or
+more. A frontier that teaches the map nothing is retried from a viewpoint at
+least 1 m away and excluded after two such viewpoints, or after a repeated Nav2 failure.
+Exploration is complete after two decisions in a row, each on a newer map, find no
+reachable frontier. The node publishes the same `/explore/status` messages as
+`explore_lite`, obeys `/explore/resume`, and draws the frontiers, its target, and
+excluded frontiers on `/explore/frontiers`.
+
+`explore_autosave` saves a map checkpoint every 5 minutes while exploration runs and
+serializes the slam_toolbox pose graph with every save. When exploration completes it
+drives the rover back to the pose it had at startup, then saves the final map into
+`maps/`. It logs events and battery voltage to CSV files in the run folder, together with
+Nav2's goal, failure, and recovery counts and the distance driven from `/odom`. It never
+publishes velocity commands.
+
+All parameters are in `config/explore_params.yaml`.
+
+```bash
+ros2 launch rover_explore explore.launch.py
+```
+
 ### rf2o_laser_odometry
 Range Flow-based 2D Odometry: estimates planar motion directly from consecutive
 RPLidar scans and publishes `nav_msgs/Odometry` to `/odom` along with the
@@ -476,6 +558,7 @@ See [`docs/software/rplidar-ros.md`](docs/software/rplidar-ros.md) for full setu
 - [Test Logs & Build Journal](docs/testing/0000-test-logs.md): full session-by-session build history
 - [RF2O Laser Odometry notes](docs/software/rf2o-laser-odometry.md)
 - [RPLidar ROS2 driver notes](docs/software/rplidar-ros.md)
+- [Exploration simulator](tools/explore_sim/README.md)
 
 ## Author
 
@@ -494,6 +577,7 @@ Building autonomous systems and learning production ROS2 development.
 - NVIDIA for Jetson developer tools and documentation
 - Slamtec for the RPLidar SDK and ROS2 driver
 - MAPIRlab for rf2o_laser_odometry, and Adlink-ROS for its ROS2 port
+- Jiří Hörner for explore_lite, and robo-friends for its ROS2 port, m-explore-ros2
 - The ROS2 and Nav2 open source communities
 
 ## License
