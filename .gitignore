@@ -6,6 +6,7 @@
 # Third-party packages, pulled with: vcs import src < rover.repos
 /src/rf2o_laser_odometry/
 /src/rplidar_ros/
+/src/m-explore-ros2/
 
 # Python
 __pycache__/

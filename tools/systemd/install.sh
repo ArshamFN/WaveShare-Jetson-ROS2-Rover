@@ -6,7 +6,7 @@ SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEST_DIR="$HOME/.config/systemd/user"
 
 mkdir -p "$DEST_DIR"
-for unit in rover-bridge.service rover-control.service rover-bringup.service rover-nav2.service; do
+for unit in rover-bridge.service rover-control.service rover-bringup.service rover-nav2.service rover-explore.service; do
     install -m 644 "$SRC_DIR/$unit" "$DEST_DIR/$unit"
     echo "Installed $DEST_DIR/$unit"
 done

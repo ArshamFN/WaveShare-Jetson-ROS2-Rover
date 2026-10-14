@@ -1,0 +1,14 @@
+[Unit]
+Description=Rover frontier exploration with map autosave
+Requisite=rover-bringup.service rover-nav2.service
+PartOf=rover-bringup.service rover-nav2.service
+After=rover-bringup.service rover-nav2.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c 'source /opt/ros/humble/setup.bash && source %h/ros2_ws/install/setup.bash && export ROS_LOCALHOST_ONLY=1 && exec ros2 launch rover_explore explore.launch.py'
+ExecStop=/bin/bash -c 'source /opt/ros/humble/setup.bash && export ROS_LOCALHOST_ONLY=1 && timeout 8 ros2 topic pub --times 3 --rate 5 --keep-alive 0.5 /explore/resume std_msgs/msg/Bool "{data: false}" > /dev/null 2>&1; exit 0'
+Environment=PYTHONUNBUFFERED=1
+KillSignal=SIGINT
+TimeoutStopSec=15
+Restart=no

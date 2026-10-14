@@ -1,0 +1,85 @@
+# rover_explorer: the rover's own explorer (rover_explore/explorer_node.py and
+# frontier_planner.py, the default in explore.launch.py). The planner values
+# are the ones validated in the offline simulator (tools/explore_sim). Floats
+# must stay written as floats (1.0, not 1): ROS 2 rejects an integer for a
+# parameter declared as a double.
+rover_explorer:
+  ros__parameters:
+    use_sim_time: false
+    map_frame: map
+    robot_base_frame: base_link
+    planner_period_s: 2.0
+    map_wait_s: 3.0
+    tf_max_age_s: 1.0
+    done_confirmations: 2
+    visualize: true
+    # Robot and Nav2 (nav2_params.yaml)
+    inscribed_radius: 0.1135
+    goal_clearance: 0.25
+    escape_radius: 0.25
+    speed: 0.22
+    turn_rate: 0.6
+    # Frontiers and viewpoints
+    min_frontier_size: 0.5
+    view_radius: 1.5
+    view_half_angle_deg: 60.0
+    view_ray_step_deg: 5.0
+    view_samples: 32
+    # Choosing the next frontier
+    turn_weight: 1.0
+    use_route: true
+    route_max_frontiers: 20
+    keep_ratio: 1.0
+    resend_distance: 0.5
+    # Giving up on a frontier
+    min_new_cells: 10
+    viewpoint_attempts: 2
+    retry_spacing: 1.0
+    failed_retries: 1
+    failed_viewpoint_radius: 0.3
+
+# explore_lite (explorer:=explore_lite, the baseline): the upstream
+# config/params.yaml values at commit 326cf8a,
+# except use_sim_time (the upstream launch file defaults it to true, for
+# simulation), min_frontier_size (0.75 m drops the frontier seen through a
+# doorway about 0.76 m wide; the size is frontier cells x map resolution) and
+# return_to_init (explore_lite sends its return goal right after canceling
+# all Nav2 goals, and the cancel can catch the return goal too; the
+# explore_autosave node drives back to the start pose instead).
+explore_node:
+  ros__parameters:
+    use_sim_time: false
+    robot_base_frame: base_link
+    costmap_topic: map
+    costmap_updates_topic: map_updates
+    visualize: true
+    planner_frequency: 0.15
+    progress_timeout: 30.0
+    potential_scale: 3.0
+    orientation_scale: 0.0
+    gain_scale: 1.0
+    transform_tolerance: 0.3
+    min_frontier_size: 0.5
+    return_to_init: false
+
+# Map autosave: checkpoints while exploring, pose graphs, battery, event logs
+# and run metrics (Nav2 counts, distance driven). On exploration_complete it
+# drives back to the pose the robot had when the node started, then saves the
+# final map.
+explore_autosave:
+  ros__parameters:
+    use_sim_time: false
+    runs_dir: "~/rover_runs"
+    maps_dir: "~/ros2_ws/maps"
+    checkpoint_period_s: 300.0
+    final_retries: 3
+    final_retry_delay_s: 10.0
+    serialize_pose_graph: true
+    return_to_start: true
+    map_frame: map
+    robot_base_frame: base_link
+    start_pose_timeout_s: 15.0
+    return_delay_s: 2.0
+    return_retries: 2
+    return_retry_delay_s: 10.0
+    return_timeout_s: 600.0
