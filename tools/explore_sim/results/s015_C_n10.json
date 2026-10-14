@@ -1,0 +1,152 @@
+[
+ {
+  "start": 0,
+  "cell": [
+   108,
+   32
+  ],
+  "heading": 0.0,
+  "distance": 23.305,
+  "time": 148.37,
+  "coverage": 91.35,
+  "goals": 28,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 1,
+  "cell": [
+   137,
+   132
+  ],
+  "heading": -0.2015,
+  "distance": 20.063,
+  "time": 127.82,
+  "coverage": 91.55,
+  "goals": 23,
+  "switches": 9,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 2,
+  "cell": [
+   102,
+   55
+  ],
+  "heading": -1.2376,
+  "distance": 22.316,
+  "time": 144.05,
+  "coverage": 91.38,
+  "goals": 28,
+  "switches": 10,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 3,
+  "cell": [
+   75,
+   91
+  ],
+  "heading": -1.3922,
+  "distance": 22.889,
+  "time": 137.93,
+  "coverage": 91.66,
+  "goals": 25,
+  "switches": 10,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 4,
+  "cell": [
+   105,
+   43
+  ],
+  "heading": -1.5402,
+  "distance": 22.576,
+  "time": 136.81,
+  "coverage": 91.53,
+  "goals": 26,
+  "switches": 9,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 5,
+  "cell": [
+   143,
+   109
+  ],
+  "heading": -0.3451,
+  "distance": 22.113,
+  "time": 135.92,
+  "coverage": 91.31,
+  "goals": 23,
+  "switches": 11,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 6,
+  "cell": [
+   112,
+   128
+  ],
+  "heading": 0.0286,
+  "distance": 23.352,
+  "time": 146.78,
+  "coverage": 92.12,
+  "goals": 25,
+  "switches": 11,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 7,
+  "cell": [
+   116,
+   137
+  ],
+  "heading": 0.3361,
+  "distance": 23.144,
+  "time": 147.59,
+  "coverage": 91.9,
+  "goals": 26,
+  "switches": 15,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 8,
+  "cell": [
+   56,
+   119
+  ],
+  "heading": 3.1133,
+  "distance": 22.213,
+  "time": 129.86,
+  "coverage": 91.71,
+  "goals": 29,
+  "switches": 8,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 9,
+  "cell": [
+   108,
+   50
+  ],
+  "heading": 1.8388,
+  "distance": 26.995,
+  "time": 156.68,
+  "coverage": 91.68,
+  "goals": 27,
+  "switches": 10,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ }
+]

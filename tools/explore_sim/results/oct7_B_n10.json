@@ -1,0 +1,152 @@
+[
+ {
+  "start": 0,
+  "cell": [
+   101,
+   27
+  ],
+  "heading": 0.0,
+  "distance": 21.602,
+  "time": 145.89,
+  "coverage": 94.26,
+  "goals": 18,
+  "switches": 11,
+  "failures": 1,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 1,
+  "cell": [
+   140,
+   93
+  ],
+  "heading": -0.2015,
+  "distance": 22.992,
+  "time": 150.0,
+  "coverage": 93.85,
+  "goals": 14,
+  "switches": 7,
+  "failures": 1,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 2,
+  "cell": [
+   103,
+   35
+  ],
+  "heading": -1.2376,
+  "distance": 22.48,
+  "time": 154.83,
+  "coverage": 94.17,
+  "goals": 18,
+  "switches": 12,
+  "failures": 1,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 3,
+  "cell": [
+   71,
+   106
+  ],
+  "heading": -1.3922,
+  "distance": 31.335,
+  "time": 222.98,
+  "coverage": 94.73,
+  "goals": 17,
+  "switches": 9,
+  "failures": 2,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 4,
+  "cell": [
+   107,
+   37
+  ],
+  "heading": -1.5402,
+  "distance": 22.323,
+  "time": 167.0,
+  "coverage": 94.33,
+  "goals": 17,
+  "switches": 10,
+  "failures": 2,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 5,
+  "cell": [
+   143,
+   103
+  ],
+  "heading": -0.3451,
+  "distance": 20.005,
+  "time": 130.72,
+  "coverage": 94.19,
+  "goals": 15,
+  "switches": 7,
+  "failures": 1,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 6,
+  "cell": [
+   116,
+   128
+  ],
+  "heading": 0.0286,
+  "distance": 24.949,
+  "time": 157.9,
+  "coverage": 94.62,
+  "goals": 15,
+  "switches": 7,
+  "failures": 1,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 7,
+  "cell": [
+   130,
+   114
+  ],
+  "heading": 0.3361,
+  "distance": 23.595,
+  "time": 176.67,
+  "coverage": 94.74,
+  "goals": 19,
+  "switches": 11,
+  "failures": 2,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 8,
+  "cell": [
+   49,
+   91
+  ],
+  "heading": 3.1133,
+  "distance": 22.998,
+  "time": 146.4,
+  "coverage": 94.09,
+  "goals": 14,
+  "switches": 11,
+  "failures": 1,
+  "end": "all_blacklisted"
+ },
+ {
+  "start": 9,
+  "cell": [
+   110,
+   131
+  ],
+  "heading": 1.8388,
+  "distance": 25.326,
+  "time": 186.42,
+  "coverage": 94.71,
+  "goals": 17,
+  "switches": 11,
+  "failures": 2,
+  "end": "all_blacklisted"
+ }
+]

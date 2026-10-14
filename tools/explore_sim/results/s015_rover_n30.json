@@ -1,0 +1,662 @@
+[
+ {
+  "start": 0,
+  "cell": [
+   108,
+   32
+  ],
+  "heading": 0.0,
+  "distance": 26.099,
+  "time": 155.08,
+  "coverage": 91.88,
+  "goals": 27,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 77,
+   "goals": 27,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 1,
+  "cell": [
+   113,
+   139
+  ],
+  "heading": 0.0887,
+  "distance": 21.925,
+  "time": 128.71,
+  "coverage": 91.97,
+  "goals": 22,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 62,
+   "goals": 22,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 2,
+  "cell": [
+   80,
+   130
+  ],
+  "heading": -0.0196,
+  "distance": 27.702,
+  "time": 153.02,
+  "coverage": 91.95,
+  "goals": 24,
+  "switches": 11,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 77,
+   "goals": 24,
+   "excluded": 0,
+   "retries_elsewhere": 3,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 3,
+  "cell": [
+   80,
+   112
+  ],
+  "heading": -1.5864,
+  "distance": 24.402,
+  "time": 133.65,
+  "coverage": 91.82,
+  "goals": 22,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 62,
+   "goals": 22,
+   "excluded": 0,
+   "retries_elsewhere": 0,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 4,
+  "cell": [
+   79,
+   36
+  ],
+  "heading": -3.0675,
+  "distance": 27.202,
+  "time": 163.64,
+  "coverage": 92.19,
+  "goals": 32,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 84,
+   "goals": 32,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 5,
+  "cell": [
+   150,
+   132
+  ],
+  "heading": -1.9327,
+  "distance": 21.627,
+  "time": 133.54,
+  "coverage": 92.07,
+  "goals": 28,
+  "switches": 19,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 64,
+   "goals": 28,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 6,
+  "cell": [
+   112,
+   101
+  ],
+  "heading": 1.2066,
+  "distance": 23.182,
+  "time": 132.02,
+  "coverage": 92.06,
+  "goals": 20,
+  "switches": 7,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 64,
+   "goals": 20,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 7,
+  "cell": [
+   92,
+   20
+  ],
+  "heading": -1.8811,
+  "distance": 25.595,
+  "time": 166.46,
+  "coverage": 91.82,
+  "goals": 32,
+  "switches": 17,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 77,
+   "goals": 32,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 8,
+  "cell": [
+   127,
+   131
+  ],
+  "heading": -0.8197,
+  "distance": 22.612,
+  "time": 137.45,
+  "coverage": 92.09,
+  "goals": 24,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 67,
+   "goals": 24,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 9,
+  "cell": [
+   79,
+   106
+  ],
+  "heading": -3.1181,
+  "distance": 24.55,
+  "time": 141.29,
+  "coverage": 91.67,
+  "goals": 22,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 67,
+   "goals": 22,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 10,
+  "cell": [
+   102,
+   43
+  ],
+  "heading": 2.0738,
+  "distance": 23.955,
+  "time": 150.26,
+  "coverage": 91.73,
+  "goals": 25,
+  "switches": 11,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 71,
+   "goals": 25,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 11,
+  "cell": [
+   143,
+   90
+  ],
+  "heading": -2.1711,
+  "distance": 22.507,
+  "time": 127.26,
+  "coverage": 92.6,
+  "goals": 24,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 63,
+   "goals": 24,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 12,
+  "cell": [
+   104,
+   132
+  ],
+  "heading": -1.4602,
+  "distance": 22.797,
+  "time": 138.29,
+  "coverage": 91.95,
+  "goals": 29,
+  "switches": 18,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 69,
+   "goals": 29,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 13,
+  "cell": [
+   75,
+   87
+  ],
+  "heading": 2.3897,
+  "distance": 30.929,
+  "time": 189.33,
+  "coverage": 92.25,
+  "goals": 30,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 92,
+   "goals": 30,
+   "excluded": 0,
+   "retries_elsewhere": 3,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 14,
+  "cell": [
+   140,
+   101
+  ],
+  "heading": 0.0615,
+  "distance": 22.237,
+  "time": 130.82,
+  "coverage": 92.0,
+  "goals": 25,
+  "switches": 16,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 65,
+   "goals": 25,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 15,
+  "cell": [
+   108,
+   36
+  ],
+  "heading": 2.1812,
+  "distance": 25.949,
+  "time": 150.68,
+  "coverage": 91.83,
+  "goals": 26,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 74,
+   "goals": 26,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 16,
+  "cell": [
+   114,
+   156
+  ],
+  "heading": 0.8779,
+  "distance": 22.825,
+  "time": 130.37,
+  "coverage": 91.97,
+  "goals": 24,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 64,
+   "goals": 24,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 17,
+  "cell": [
+   136,
+   128
+  ],
+  "heading": 1.5191,
+  "distance": 29.229,
+  "time": 160.15,
+  "coverage": 92.25,
+  "goals": 20,
+  "switches": 11,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 75,
+   "goals": 20,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 18,
+  "cell": [
+   56,
+   21
+  ],
+  "heading": -2.5667,
+  "distance": 20.227,
+  "time": 120.69,
+  "coverage": 91.7,
+  "goals": 25,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 60,
+   "goals": 25,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 19,
+  "cell": [
+   84,
+   31
+  ],
+  "heading": 0.2585,
+  "distance": 21.458,
+  "time": 130.53,
+  "coverage": 91.65,
+  "goals": 22,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 60,
+   "goals": 22,
+   "excluded": 0,
+   "retries_elsewhere": 0,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 20,
+  "cell": [
+   115,
+   160
+  ],
+  "heading": 0.0488,
+  "distance": 23.029,
+  "time": 131.17,
+  "coverage": 91.97,
+  "goals": 24,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 64,
+   "goals": 24,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 21,
+  "cell": [
+   77,
+   96
+  ],
+  "heading": 2.3332,
+  "distance": 23.787,
+  "time": 143.3,
+  "coverage": 92.11,
+  "goals": 30,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 75,
+   "goals": 30,
+   "excluded": 0,
+   "retries_elsewhere": 3,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 22,
+  "cell": [
+   115,
+   86
+  ],
+  "heading": -0.8717,
+  "distance": 23.835,
+  "time": 138.63,
+  "coverage": 91.74,
+  "goals": 22,
+  "switches": 10,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 65,
+   "goals": 22,
+   "excluded": 0,
+   "retries_elsewhere": 0,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 23,
+  "cell": [
+   68,
+   49
+  ],
+  "heading": 0.6169,
+  "distance": 27.177,
+  "time": 177.6,
+  "coverage": 92.14,
+  "goals": 35,
+  "switches": 15,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 89,
+   "goals": 35,
+   "excluded": 0,
+   "retries_elsewhere": 3,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 24,
+  "cell": [
+   93,
+   93
+  ],
+  "heading": -2.7693,
+  "distance": 24.651,
+  "time": 143.55,
+  "coverage": 91.93,
+  "goals": 24,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 70,
+   "goals": 24,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 25,
+  "cell": [
+   109,
+   132
+  ],
+  "heading": -0.706,
+  "distance": 22.74,
+  "time": 138.01,
+  "coverage": 91.98,
+  "goals": 28,
+  "switches": 17,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 67,
+   "goals": 28,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 26,
+  "cell": [
+   31,
+   112
+  ],
+  "heading": -1.1119,
+  "distance": 27.836,
+  "time": 162.45,
+  "coverage": 92.09,
+  "goals": 30,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 83,
+   "goals": 30,
+   "excluded": 0,
+   "retries_elsewhere": 3,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 27,
+  "cell": [
+   94,
+   51
+  ],
+  "heading": -2.1979,
+  "distance": 25.287,
+  "time": 164.52,
+  "coverage": 91.93,
+  "goals": 33,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 81,
+   "goals": 33,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 28,
+  "cell": [
+   68,
+   180
+  ],
+  "heading": 1.9876,
+  "distance": 28.678,
+  "time": 168.88,
+  "coverage": 92.74,
+  "goals": 29,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 82,
+   "goals": 29,
+   "excluded": 0,
+   "retries_elsewhere": 1,
+   "failed_retries": 0
+  }
+ },
+ {
+  "start": 29,
+  "cell": [
+   96,
+   31
+  ],
+  "heading": -0.7575,
+  "distance": 23.844,
+  "time": 145.27,
+  "coverage": 92.03,
+  "goals": 36,
+  "switches": 17,
+  "failures": 0,
+  "end": "no_reachable_frontiers",
+  "planner": {
+   "decisions": 76,
+   "goals": 36,
+   "excluded": 0,
+   "retries_elsewhere": 2,
+   "failed_retries": 0
+  }
+ }
+]

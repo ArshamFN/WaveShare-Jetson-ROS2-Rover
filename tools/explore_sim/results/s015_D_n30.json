@@ -1,0 +1,452 @@
+[
+ {
+  "start": 0,
+  "cell": [
+   108,
+   32
+  ],
+  "heading": 0.0,
+  "distance": 20.582,
+  "time": 131.05,
+  "coverage": 91.6,
+  "goals": 27,
+  "switches": 10,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 1,
+  "cell": [
+   113,
+   139
+  ],
+  "heading": 0.0887,
+  "distance": 22.922,
+  "time": 142.13,
+  "coverage": 92.07,
+  "goals": 29,
+  "switches": 17,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 2,
+  "cell": [
+   80,
+   130
+  ],
+  "heading": -0.0196,
+  "distance": 23.239,
+  "time": 138.15,
+  "coverage": 91.76,
+  "goals": 29,
+  "switches": 10,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 3,
+  "cell": [
+   80,
+   112
+  ],
+  "heading": -1.5864,
+  "distance": 24.089,
+  "time": 148.49,
+  "coverage": 91.81,
+  "goals": 28,
+  "switches": 15,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 4,
+  "cell": [
+   79,
+   36
+  ],
+  "heading": -3.0675,
+  "distance": 22.72,
+  "time": 143.89,
+  "coverage": 91.55,
+  "goals": 27,
+  "switches": 15,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 5,
+  "cell": [
+   150,
+   132
+  ],
+  "heading": -1.9327,
+  "distance": 22.396,
+  "time": 135.87,
+  "coverage": 92.33,
+  "goals": 28,
+  "switches": 19,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 6,
+  "cell": [
+   112,
+   101
+  ],
+  "heading": 1.2066,
+  "distance": 23.214,
+  "time": 147.16,
+  "coverage": 91.65,
+  "goals": 29,
+  "switches": 15,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 7,
+  "cell": [
+   92,
+   20
+  ],
+  "heading": -1.8811,
+  "distance": 21.53,
+  "time": 149.93,
+  "coverage": 91.7,
+  "goals": 42,
+  "switches": 29,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 8,
+  "cell": [
+   127,
+   131
+  ],
+  "heading": -0.8197,
+  "distance": 22.356,
+  "time": 131.77,
+  "coverage": 91.98,
+  "goals": 25,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 9,
+  "cell": [
+   79,
+   106
+  ],
+  "heading": -3.1181,
+  "distance": 27.628,
+  "time": 164.85,
+  "coverage": 91.54,
+  "goals": 21,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 10,
+  "cell": [
+   102,
+   43
+  ],
+  "heading": 2.0738,
+  "distance": 19.154,
+  "time": 123.1,
+  "coverage": 86.74,
+  "goals": 21,
+  "switches": 9,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 11,
+  "cell": [
+   143,
+   90
+  ],
+  "heading": -2.1711,
+  "distance": 22.387,
+  "time": 139.97,
+  "coverage": 92.58,
+  "goals": 29,
+  "switches": 16,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 12,
+  "cell": [
+   104,
+   132
+  ],
+  "heading": -1.4602,
+  "distance": 22.615,
+  "time": 130.21,
+  "coverage": 91.93,
+  "goals": 24,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 13,
+  "cell": [
+   75,
+   87
+  ],
+  "heading": 2.3897,
+  "distance": 25.91,
+  "time": 158.77,
+  "coverage": 91.66,
+  "goals": 28,
+  "switches": 17,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 14,
+  "cell": [
+   140,
+   101
+  ],
+  "heading": 0.0615,
+  "distance": 22.063,
+  "time": 132.26,
+  "coverage": 91.93,
+  "goals": 26,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 15,
+  "cell": [
+   108,
+   36
+  ],
+  "heading": 2.1812,
+  "distance": 19.95,
+  "time": 125.22,
+  "coverage": 86.81,
+  "goals": 24,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 16,
+  "cell": [
+   114,
+   156
+  ],
+  "heading": 0.8779,
+  "distance": 22.261,
+  "time": 132.23,
+  "coverage": 91.73,
+  "goals": 22,
+  "switches": 15,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 17,
+  "cell": [
+   136,
+   128
+  ],
+  "heading": 1.5191,
+  "distance": 27.809,
+  "time": 158.28,
+  "coverage": 91.98,
+  "goals": 24,
+  "switches": 17,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 18,
+  "cell": [
+   56,
+   21
+  ],
+  "heading": -2.5667,
+  "distance": 22.129,
+  "time": 149.18,
+  "coverage": 91.87,
+  "goals": 31,
+  "switches": 17,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 19,
+  "cell": [
+   84,
+   31
+  ],
+  "heading": 0.2585,
+  "distance": 21.592,
+  "time": 136.85,
+  "coverage": 91.7,
+  "goals": 22,
+  "switches": 9,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 20,
+  "cell": [
+   115,
+   160
+  ],
+  "heading": 0.0488,
+  "distance": 22.751,
+  "time": 133.81,
+  "coverage": 91.87,
+  "goals": 28,
+  "switches": 17,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 21,
+  "cell": [
+   77,
+   96
+  ],
+  "heading": 2.3332,
+  "distance": 23.487,
+  "time": 145.35,
+  "coverage": 91.54,
+  "goals": 28,
+  "switches": 14,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 22,
+  "cell": [
+   115,
+   86
+  ],
+  "heading": -0.8717,
+  "distance": 23.409,
+  "time": 145.04,
+  "coverage": 91.76,
+  "goals": 27,
+  "switches": 10,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 23,
+  "cell": [
+   68,
+   49
+  ],
+  "heading": 0.6169,
+  "distance": 23.167,
+  "time": 152.71,
+  "coverage": 91.7,
+  "goals": 29,
+  "switches": 16,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 24,
+  "cell": [
+   93,
+   93
+  ],
+  "heading": -2.7693,
+  "distance": 24.093,
+  "time": 161.33,
+  "coverage": 91.31,
+  "goals": 29,
+  "switches": 15,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 25,
+  "cell": [
+   109,
+   132
+  ],
+  "heading": -0.706,
+  "distance": 22.444,
+  "time": 132.31,
+  "coverage": 92.05,
+  "goals": 29,
+  "switches": 16,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 26,
+  "cell": [
+   31,
+   112
+  ],
+  "heading": -1.1119,
+  "distance": 22.165,
+  "time": 135.64,
+  "coverage": 86.88,
+  "goals": 29,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 27,
+  "cell": [
+   94,
+   51
+  ],
+  "heading": -2.1979,
+  "distance": 22.19,
+  "time": 128.98,
+  "coverage": 91.58,
+  "goals": 23,
+  "switches": 6,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 28,
+  "cell": [
+   68,
+   180
+  ],
+  "heading": 1.9876,
+  "distance": 25.142,
+  "time": 156.76,
+  "coverage": 92.39,
+  "goals": 40,
+  "switches": 19,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 29,
+  "cell": [
+   96,
+   31
+  ],
+  "heading": -0.7575,
+  "distance": 21.892,
+  "time": 134.56,
+  "coverage": 91.76,
+  "goals": 25,
+  "switches": 11,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ }
+]

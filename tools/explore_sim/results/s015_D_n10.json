@@ -1,0 +1,152 @@
+[
+ {
+  "start": 0,
+  "cell": [
+   108,
+   32
+  ],
+  "heading": 0.0,
+  "distance": 20.582,
+  "time": 131.05,
+  "coverage": 91.6,
+  "goals": 27,
+  "switches": 10,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 1,
+  "cell": [
+   137,
+   132
+  ],
+  "heading": -0.2015,
+  "distance": 20.868,
+  "time": 130.51,
+  "coverage": 92.07,
+  "goals": 31,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 2,
+  "cell": [
+   102,
+   55
+  ],
+  "heading": -1.2376,
+  "distance": 22.709,
+  "time": 144.26,
+  "coverage": 91.65,
+  "goals": 32,
+  "switches": 16,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 3,
+  "cell": [
+   75,
+   91
+  ],
+  "heading": -1.3922,
+  "distance": 27.859,
+  "time": 169.22,
+  "coverage": 91.71,
+  "goals": 24,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 4,
+  "cell": [
+   105,
+   43
+  ],
+  "heading": -1.5402,
+  "distance": 22.915,
+  "time": 144.69,
+  "coverage": 91.72,
+  "goals": 29,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 5,
+  "cell": [
+   143,
+   109
+  ],
+  "heading": -0.3451,
+  "distance": 20.63,
+  "time": 124.51,
+  "coverage": 91.63,
+  "goals": 25,
+  "switches": 13,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 6,
+  "cell": [
+   112,
+   128
+  ],
+  "heading": 0.0286,
+  "distance": 22.001,
+  "time": 127.64,
+  "coverage": 92.03,
+  "goals": 26,
+  "switches": 12,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 7,
+  "cell": [
+   116,
+   137
+  ],
+  "heading": 0.3361,
+  "distance": 24.035,
+  "time": 145.21,
+  "coverage": 91.86,
+  "goals": 29,
+  "switches": 20,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 8,
+  "cell": [
+   56,
+   119
+  ],
+  "heading": 3.1133,
+  "distance": 25.707,
+  "time": 161.13,
+  "coverage": 91.59,
+  "goals": 33,
+  "switches": 18,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ },
+ {
+  "start": 9,
+  "cell": [
+   108,
+   50
+  ],
+  "heading": 1.8388,
+  "distance": 20.255,
+  "time": 125.76,
+  "coverage": 86.6,
+  "goals": 23,
+  "switches": 11,
+  "failures": 0,
+  "end": "no_reachable_frontiers"
+ }
+]
